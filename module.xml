@@ -19,7 +19,7 @@
 <Scan_Record>
   <Tab>
     Metadata
-    <ID f="id notnull autonum"/>
+    <ID f="notnull autonum"/>
     <Attach_New_Files t="button"/>
     <File_Type>
       <opts>
