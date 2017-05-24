@@ -354,16 +354,10 @@
     return newFiles;
   }
 
-/*************************** PERIOD INITIALISATION ****************************/
+/******************************************************************************/
 /* Triggered using @POSTPROC.                                                 */
 /******************************************************************************/
-  initialisePeriods() {
-    tabgroup = "Scan_Record";
-    setFieldValue("Scan_Record/Tab/Period_From", "07/07/1937");
-    setFieldValue("Scan_Record/Tab/Period_Till", "02/09/1945");
-    keepTabGroupChanges(tabgroup);
-  }
-
+  
 /************************** SUB-THEME INPUT: "OTHER" **************************/
   subThemePostfixes = new ArrayList();
   subThemePostfixes.add("Epigraphy");
