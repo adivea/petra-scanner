@@ -83,7 +83,7 @@
     <PDF_Output_Name f="id notnull"/>
     <Author_Last_name/>
     <Author_First_Name/>
-    <Year/>
+    <Year b="decimal"/>
     <Book_Title/>
     <Chapter/>
     <Journal/>
