@@ -1,0 +1,2505 @@
+import android.util.Log;
+
+// Beanshell won't let me write "\0".
+final String SEP = Character.toString ((char) 0);
+
+Object dialog;          // Used to help coordinate the display of a "busy..." dialog
+String parentTabgroup;  // Used to allow entities to be saved as children
+String parentTabgroup__;// The tab group which was previously displayed
+String redirectTab;     // makes newTab work as expected
+String username = "";
+String userid   = "";
+
+setFileSyncEnabled(true);
+setSyncDelay(5.0f);
+setSyncEnabled(true);
+setSyncMaxInterval(600.0f);
+setSyncMinInterval(5.0f);
+
+/******************************** STRING UTILS ********************************/
+String replaceFirst(String haystack, String needle, String replacement) {
+  i = haystack.indexOf(needle);
+  if (i == -1)           return haystack;
+  if (needle.equals("")) return haystack;
+  pre  = haystack.substring(0, i                                   );
+  post = haystack.substring(   i+needle.length(), haystack.length());
+  return pre + replacement + post;
+}
+
+String replaceFirst(String haystack, String replacement) {
+  return replaceFirst(haystack, "%s", replacement);
+}
+
+String translate(String s, Map m) {
+  String out = "";
+
+  for (char c : s) {
+    String translation = m.get(c);
+
+    if (isNull(translation)) out += c;
+    else                     out += translation;
+  }
+
+  return out;
+}
+
+String escape(String s) {
+  Map dict = new HashMap();
+  dict.put('\"', "\\\"");
+  dict.put('\\', "\\\\");
+  dict.put('\b', "\\b" );
+  dict.put('\f', "\\f" );
+  dict.put('\n', "\\n" );
+  dict.put('\r', "\\r" );
+
+  return translate(s, dict);
+}
+
+String args2str(Object[] args) {
+  String str = "";
+  String sep = ", ";
+
+  for (Object o : args) {
+    if (o instanceof String) str += "\"" + escape(o) + "\"" + sep;
+    else                     str +=               o         + sep;
+  }
+
+  // The loop adds a superfluous trailing separator. This removes it.
+  str = str.substring(0, str.length() - sep.length());
+
+  return str;
+}
+
+// "Function to string". Makes it very slightly less painful to write callback
+// functions as strings.
+String fun2str(String funName, Object[] args) {
+  String argsStr = args2str(args);
+
+  String str = "{funName}({argsStr})";
+  str = replaceFirst(str, "{funName}", funName);
+  str = replaceFirst(str, "{argsStr}", argsStr);
+
+  return str;
+}
+
+String fun2str(String funName, Object args) {
+  return fun2str(funName, new Object[]{args});
+}
+
+/******************************************************************************/
+/*                           DOCUMENT OBJECT MODEL                            */
+/******************************************************************************/
+String  PREVIOUSLY_DISPLAYED_TAB_GROUP = "";
+String  CURRENTLY_DISPLAYED_TAB_GROUP  = "";
+Map     REF_TO_TYPE                    = new HashMap();
+HashSet DATA_REFS                      = new HashSet();
+
+REF_TO_TYPE.put("User/User/Users", "list");
+REF_TO_TYPE.put("Control/Control/Next_ID", "input");
+REF_TO_TYPE.put("Control/Control/Create_New_Record", "button");
+REF_TO_TYPE.put("Control/Search", "group");
+REF_TO_TYPE.put("Control/Search/Search_Term", "input");
+REF_TO_TYPE.put("Control/Search/Search_Button", "button");
+REF_TO_TYPE.put("Control/Search/Entity_List", "list");
+REF_TO_TYPE.put("Scan_Record/Tab/ID", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Attach_New_Files", "button");
+REF_TO_TYPE.put("Scan_Record/Tab/File_Type", "dropdown");
+REF_TO_TYPE.put("Scan_Record/Tab/Language", "dropdown");
+REF_TO_TYPE.put("Scan_Record/Tab/Origin", "dropdown");
+REF_TO_TYPE.put("Scan_Record/Tab/Research", "dropdown");
+REF_TO_TYPE.put("Scan_Record/Tab/PDF_Output_Name", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Author_Last_name", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Author_First_Name", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Year", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Book_Title", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Chapter", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Journal", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Volume", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Issue", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Start_Page", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/End_Page", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/File_Reference", "input");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Epigraphy", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Thrace", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Archaeology", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Anthropology", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_History", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Geography", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Research_Topics", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Media", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Other", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Notes/Notes", "input");
+REF_TO_TYPE.put("Scan_Record/Files/Files", "file");
+REF_TO_TYPE.put("Scan_Record/Files/Files_Button_1", "button");
+
+DATA_REFS.add("Scan_Record/Tab/ID");
+DATA_REFS.add("Scan_Record/Tab/File_Type");
+DATA_REFS.add("Scan_Record/Tab/Language");
+DATA_REFS.add("Scan_Record/Tab/Origin");
+DATA_REFS.add("Scan_Record/Tab/Research");
+DATA_REFS.add("Scan_Record/Tab/PDF_Output_Name");
+DATA_REFS.add("Scan_Record/Tab/Author_Last_name");
+DATA_REFS.add("Scan_Record/Tab/Author_First_Name");
+DATA_REFS.add("Scan_Record/Tab/Year");
+DATA_REFS.add("Scan_Record/Tab/Book_Title");
+DATA_REFS.add("Scan_Record/Tab/Chapter");
+DATA_REFS.add("Scan_Record/Tab/Journal");
+DATA_REFS.add("Scan_Record/Tab/Volume");
+DATA_REFS.add("Scan_Record/Tab/Issue");
+DATA_REFS.add("Scan_Record/Tab/Start_Page");
+DATA_REFS.add("Scan_Record/Tab/End_Page");
+DATA_REFS.add("Scan_Record/Tab/File_Reference");
+DATA_REFS.add("Scan_Record/Tab/Theme_Epigraphy");
+DATA_REFS.add("Scan_Record/Tab/Theme_Thrace");
+DATA_REFS.add("Scan_Record/Tab/Theme_Archaeology");
+DATA_REFS.add("Scan_Record/Tab/Theme_Anthropology");
+DATA_REFS.add("Scan_Record/Tab/Theme_History");
+DATA_REFS.add("Scan_Record/Tab/Theme_Geography");
+DATA_REFS.add("Scan_Record/Tab/Theme_Research_Topics");
+DATA_REFS.add("Scan_Record/Tab/Theme_Media");
+DATA_REFS.add("Scan_Record/Tab/Theme_Other");
+DATA_REFS.add("Scan_Record/Notes/Notes");
+DATA_REFS.add("Scan_Record/Files/Files");
+
+String getType(String ref) {
+  String type = REF_TO_TYPE.get(ref);
+  if (type == null) return "";
+  else              return type;
+}
+
+boolean hasData(String ref) {
+  return DATA_REFS.contains(ref);
+}
+
+List getTabGroups() {
+  List tabGroups = new ArrayList();
+  tabGroups.add("User");
+  tabGroups.add("Control");
+  tabGroups.add("Scan_Record");
+  return tabGroups;
+}
+
+List getMenuTypes() {
+  List menuTypes = new ArrayList();
+  menuTypes.add("checkbox");
+  menuTypes.add("dropdown");
+  menuTypes.add("list");
+  menuTypes.add("picture");
+  menuTypes.add("radio");
+  return menuTypes;
+}
+
+List getMediaTypes() {
+  List mediaTypes = new ArrayList();
+  mediaTypes.add("audio");
+  mediaTypes.add("camera");
+  mediaTypes.add("file");
+  mediaTypes.add("video");
+  return mediaTypes;
+}
+
+boolean isMenuType(String type) {
+  return getMenuTypes().contains(type);
+}
+
+boolean isMediaType(String type) {
+  return getMediaTypes().contains(type);
+}
+
+boolean hasMenuType(String ref) {
+  String refType = getType(ref);
+  return isMenuType(refType);
+}
+
+boolean hasMediaType(String ref) {
+  String type = getType(ref);
+  return isMediaType(type);
+}
+
+boolean isFlaggedNodata(String tabGroup) {
+  List flaggedTabGroups = new ArrayList();
+  flaggedTabGroups.add("User");
+  flaggedTabGroups.add("Control");
+  return flaggedTabGroups.contains(tabGroup);
+}
+
+void updateDisplayedTabGroup(String tabGroup) {
+  PREVIOUSLY_DISPLAYED_TAB_GROUP = CURRENTLY_DISPLAYED_TAB_GROUP;
+  CURRENTLY_DISPLAYED_TAB_GROUP  = tabGroup;
+}
+
+String getPreviousTabGroup() {
+  return getPreviouslyDisplayedTabGroup();
+}
+
+String getPreviouslyDisplayedTabGroup() {
+  return PREVIOUSLY_DISPLAYED_TAB_GROUP;
+}
+
+String getDisplayedTabGroup() {
+  return CURRENTLY_DISPLAYED_TAB_GROUP;
+}
+
+boolean isDisplayed(String ref) {
+  return getDisplayedTabGroup().equals(ref);
+}
+
+String getTabGroupRef(String fullRef) {
+  Boolean lastPartOnly = false;
+  return getTabGroupRef(fullRef, lastPartOnly);
+}
+
+String getTabGroupRef(String fullRef, Boolean lastPartOnly) {
+  if (isNull(fullRef)) {
+    return null;
+  }
+
+  String[] parts = fullRef.split("/");
+
+  if (parts.length < 1) return null;
+  return parts[0];
+}
+
+String getTabRef(String fullRef) {
+  Boolean lastPartOnly = false;
+  return getTabRef(fullRef, lastPartOnly);
+}
+
+String getTabRef(String fullRef, Boolean lastPartOnly) {
+  if (isNull(fullRef)) {
+    return null;
+  }
+
+  String[] parts = fullRef.split("/");
+
+  if (parts.length < 2) return null;
+  if (lastPartOnly) return                  parts[1];
+  else              return parts[0] + "/" + parts[1];
+}
+
+String getLastRefPart(String fullRef) {
+  if (isNull(fullRef)) {
+    return null;
+  }
+
+  String[] parts = fullRef.split("/");
+  return parts[parts.length-1];
+}
+
+String getGuiElementRef(String fullRef) {
+  Boolean lastPartOnly = true;
+  return getGuiElementRef(fullRef, lastPartOnly);
+}
+
+String getGuiElementRef(String fullRef, Boolean lastPartOnly) {
+  if (isNull(fullRef)) {
+    return null;
+  }
+
+  String[] parts = fullRef.split("/");
+
+  if (parts.length < 3) return null;
+  if (lastPartOnly) return parts[2];
+  else              return fullRef;
+}
+
+String getArch16nKey(String ref) {
+  String lastRefPart = getLastRefPart(ref);
+
+  if (isNull(lastRefPart)) return null;
+  else                     return "{" + lastRefPart + "}";
+}
+
+String guessArch16nVal(String ref) {
+  String arch16nKey = getArch16nKey(ref);
+
+  if (isNull(arch16nKey)) return "";
+  arch16nKey = arch16nKey.replaceAll("_", " ");
+  arch16nKey = arch16nKey.replaceAll("^\\{", "");
+  arch16nKey = arch16nKey.replaceAll("\\}$", "");
+  return arch16nKey;
+}
+
+String getAttributeName(String ref) {
+  String guiElementRef = getGuiElementRef(ref);
+  if (isNull(guiElementRef)) {
+    return null;
+  }
+
+  String attributeName = guiElementRef.replaceAll("_", " ");
+  return attributeName;
+}
+
+String getArchEntType(String ref) {
+  String tabGroupRef = getTabGroupRef(ref);
+  if (isNull(tabGroupRef)) {
+    return null;
+  }
+
+  String archEntType = tabGroupRef.replaceAll("_", " ");
+  return archEntType;
+}
+
+String getArchEntTypePascalCased(String ref) {
+  String archEntType = getArchEntType(ref);
+  if (archEntType == null) {
+    return archEntType;
+  }
+
+  return archEntType.replaceAll(" ", "");
+}
+
+/******************************************************************************/
+/*                            BINDING ACCUMULATOR                             */
+/*                                                                            */
+/* The binding accumulator allows onEvent bindings for the same element to    */
+/* accumulate over multiple onEvent calls instead of having later calls       */
+/* override earlier ones.                                                     */
+/*                                                                            */
+/* It also adds support for a several additional events:                      */
+/*   - "blur" --- This is merely an interface to make code for adding "blur"  */
+/*         events more consistent.                                            */
+/*   - "copy" --- Triggered as a record is duplicated, immediately before it  */
+/*         is first saved.                                                    */
+/*   - "create" --- Triggered after a record is first created.                */
+/*   - "delete" --- Triggered after a record is deleted.                      */
+/*   - "prefetch" --- Triggered before the "fetch" event. More specifically,  */
+/*         this event is triggered before a tab group is fetched and          */
+/*         displayed.                                                         */
+/*   - "fetch" --- Triggered after a record is fetched and displayed in a     */
+/*         given tab group.                                                   */
+/*   - "focus" --- This is merely an interface to make code for adding        */
+/*         "focus" events more consistent.                                    */
+/*   - "leave" --- Triggered after a given tab group is navigated away        */
+/*         from. Note that this event cannot be triggered when the FAIMS app  */
+/*         is exited.                                                         */
+/*   - "save" --- Triggered each time a tab group is saved. This includes the */
+/*         first time the tab group is saved as well as subsequent            */
+/*         onSave(String, Boolean) calls.                                     */
+/*                                                                            */
+/* A single call to `bindOnEvents` must occur after all the `addOnEvent` and  */
+/* `delOnEvents` calls. Calling `bindOnEvents` is what actually establishes   */
+/* the bindings once they have been added to the accumulator.                 */
+/******************************************************************************/
+Map    EVENTS        = new HashMap(); // (ref, event type) -> callback statement
+Set    CUSTOM_EVENTS = new HashSet(); // Events not handled by `onEvent`
+CUSTOM_EVENTS.add("blur");
+CUSTOM_EVENTS.add("copy");
+CUSTOM_EVENTS.add("create");
+CUSTOM_EVENTS.add("delete");
+CUSTOM_EVENTS.add("fetch");
+CUSTOM_EVENTS.add("focus");
+CUSTOM_EVENTS.add("leave");
+CUSTOM_EVENTS.add("prefetch");
+CUSTOM_EVENTS.add("save");
+
+String getKey(String ref, String event) {
+  return ref + SEP + event;
+}
+
+/* Returns the set of statements bound to an element at `ref` and occuring on
+ * `event`.
+ */
+ArrayList getStatements(String ref, String event) {
+  String    key = getKey(ref, event);
+  ArrayList val = (ArrayList) EVENTS.get(key);
+
+  if (val == null) return new ArrayList();
+  else             return val;
+}
+
+void addStatement(String ref, String event, String statement) {
+  // In the case that a statement already exists for a given (`ref`, `event`)
+  // pair, writing `val.add(statement);` will be enough to add the extra
+  // statement. This is because `getStatements` returns a reference to a list.
+  // In the case just described, the list is stored in the `EVENTS` map.
+  // However, sometimes `getStatements` returns empty lists which are not stored
+  // in that map. In this case, calling `EVENTS.put` is required.
+
+  String    key = getKey(ref, event);
+  ArrayList val = getStatements(ref, event);
+  val.add(statement);
+  EVENTS.put(key, val);
+}
+
+String getStatementsString(String ref, String event) {
+  ArrayList stmts = getStatements(ref, event);
+  String stmtsStr = "";
+  for (String s : stmts) {
+    stmtsStr += s;
+    stmtsStr += "; ";
+  }
+  return stmtsStr;
+}
+
+boolean hasOnEvent(String ref, String event, String statement) {
+  return getStatements(ref, event).contains(statement);
+}
+
+void delOnEvent(String ref, String event, String statement) {
+  while(getStatements(ref, event).remove(statement));
+}
+
+void addOnEvent(String ref, String event, String statement) {
+  // Calling `delOnEvent()` first ensures statement occurs once in the list, at
+  // the end.
+  delOnEvent  (ref, event, statement);
+  addStatement(ref, event, statement);
+}
+
+void bindOnEvent(String ref, String event) {
+  String stmtsStr     = getStatementsString(ref, event);
+  String focusStmtStr = getStatementsString(ref, "focus");
+  String blurStmtStr  = getStatementsString(ref, "blur" );
+
+  if (!CUSTOM_EVENTS.contains(event)) {
+    onEvent(ref, event, stmtsStr);
+  } else if (event.equals("focus")) {
+    onFocus(ref, focusStmtStr, blurStmtStr);
+  } else if (event.equals("blur" )) {
+    onFocus(ref, focusStmtStr, blurStmtStr);
+  } else {
+    ; // Other events are implemented using auto-generated callback functions
+  }
+}
+
+void bindOnEvents() {
+  for (String key : EVENTS.keySet()) {
+    refevent = key.split(SEP);
+    ref   = refevent[0];
+    event = refevent[1];
+    bindOnEvent(ref, event);
+  }
+}
+
+void onLeaveTabGroup() {
+  onLeaveTabGroup(getPreviouslyDisplayedTabGroup());
+}
+
+/* Execute the "leave" event for the tab group at `ref` if a callback for it
+ * exists.
+ */
+void onLeaveTabGroup(String ref) {
+  String event    = "leave";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+
+/* Establishes `onEvent` bindings necessary to make the "leave" event work. The
+ * "leave" event is really triggered upon "show" of another tab.
+ */
+for (tg : getTabGroups()) {
+  String ref      = tg;
+  String event    = "show";
+  String callback;
+
+  // Update (previously) displayed tab group
+  callback = fun2str("updateDisplayedTabGroup", ref);
+  addOnEvent(ref, event, callback);
+
+  // Trigger on leave tab group event
+  callback = "onLeaveTabGroup()";
+  addOnEvent(ref, event, callback);
+}
+
+/******************************* LOCALSETTINGS ********************************/
+void makeLocalID(){
+  fetchOne("CREATE TABLE IF NOT EXISTS localSettings (key text primary key, value text);", null);
+  fetchOne("DROP VIEW IF EXISTS parentchild;", null);
+  fetchOne("CREATE VIEW parentchild AS "+
+           "           SELECT parent.uuid as parentuuid, child.uuid as childuuid, parent.participatesverb as parentparticipatesverb, parent.relationshipid, parent.aenttypename as parentaenttypename, child.participatesverb as childparticipatesverb, child.aenttypename as childaenttypename, createdat"+
+           "             FROM (SELECT uuid, participatesverb, aenttypename, relationshipid, relntimestamp as createdat"+
+           "                     FROM latestnondeletedaentreln "+
+           "                     JOIN relationship USING (relationshipid) "+
+           "                     JOIN latestnondeletedarchent USING (uuid) "+
+           "                     JOIN aenttype USING (aenttypeid)) parent "+
+           "             JOIN (SELECT uuid, relationshipid, participatesverb, aenttypename "+
+           "                     FROM latestnondeletedaentreln "+
+           "                     JOIN relationship USING (relationshipid) "+
+           "                     JOIN latestnondeletedarchent USING (uuid) "+
+           "                     JOIN aenttype USING (aenttypeid)) child "+
+           "               ON (parent.relationshipid = child.relationshipid AND parent.uuid != child.uuid)");
+}
+makeLocalID();
+
+void insertIntoLocalSettings(String ref) {
+  String val = getFieldValue(ref);
+  insertIntoLocalSettings(ref, val);
+}
+
+void insertIntoLocalSettings(String key, String val) {
+  fetchOne("REPLACE INTO localSettings(key, value) VALUES('" + key + "', '" + val + "');");
+}
+
+void insertIntoLocalSettings(String key, Integer val) {
+  insertIntoLocalSettings(key, Integer.toString(val));
+}
+
+void insertIntoLocalSettingsOnChange(String ref) {
+  String val = getFieldValue(ref);
+
+  String insertCallback = fun2str("insertIntoLocalSettings", ref);
+
+  addOnEvent(ref, "blur",  insertCallback);
+  addOnEvent(ref, "click", insertCallback);
+}
+
+void setFieldValueFromLocalSettings(String key, String ref, boolean doOverwrite) {
+  String val = getFieldValue(ref);
+  if (!isNull(val) && !doOverwrite) {
+    return;
+  }
+
+  String q = "SELECT value FROM localSettings WHERE key = '" + key + "';";
+  fetchOne(q, new FetchCallback() {
+    onFetch(result) {
+      if (!isNull(result)) {
+        setFieldValue(ref, result.get(0));
+      }
+    }
+  });
+}
+
+void setFieldValueFromLocalSettings(String key, String ref) {
+  boolean doOverwrite = false;
+  setFieldValueFromLocalSettings(key, ref);
+}
+
+void setFieldValueFromLocalSettings(String ref, boolean doOverwrite) {
+  setFieldValueFromLocalSettings(ref, ref, doOverwrite);
+}
+
+void setFieldValueFromLocalSettings(String ref) {
+  setFieldValueFromLocalSettings(ref, false);
+}
+
+void setFieldValueFromLocalSettingsOnShow(String ref, boolean doOverwrite) {
+  String cb = fun2str(
+      "setFieldValueFromLocalSettings",
+      new Object[]{ref, doOverwrite}
+  );
+
+  addOnEvent(getTabGroupRef(ref), "show", cb);
+}
+
+void setFieldValueFromLocalSettingsOnShow(String ref) {
+  boolean doOverwrite = false;
+  setFieldValueFromLocalSettingsOnShow(ref, doOverwrite);
+}
+
+/* Causes the value of the field given by `ref` to be saved each time it is
+ * modified (on blur). The value of the field is restored when the tab group
+ * containing the field is displayed.
+ *
+ * This function depends on `addOnEvent`. Therefore this function must be called
+ * after `addOnEvent` is defined, but before `bindOnEvents` is called. This will
+ * be so if the call is made in the autogenerator's `logic` tags.
+ */
+void persistOverSessions(String ref) {
+  setFieldValueFromLocalSettingsOnShow(ref);
+  insertIntoLocalSettingsOnChange     (ref);
+}
+
+void persistOverSessions(String ref, boolean doOverwrite) {
+  setFieldValueFromLocalSettingsOnShow(ref, doOverwrite);
+  insertIntoLocalSettingsOnChange     (ref);
+}
+
+
+
+/*************************** FIELD COPYING HELPERS ****************************/
+/* Provides an easy way to copy field values, even between vocabs.            */
+/******************************************************************************/
+boolean setMenuValue(String ref, String vocabName) {
+  String attrName = getAttributeName(ref);
+  String vocabId = getVocabId(attrName, vocabName);
+
+  if (isNull(vocabId))
+    return false;
+  else {
+    setFieldValue(ref, vocabId);
+    return true;
+  }
+}
+
+void copyFieldValue(String src, String dst) {
+  Boolean doFindVocabId = true;
+  copyFieldValue(src, dst, doFindVocabId);
+}
+
+/* `src`           The ref of the source field.
+ * `dst`           The ref of the destination field.
+ * `doFindVocabId` If this is true, and the properties/attributes of `src` and
+ *                 `dst` are different, `copyFieldValue` treats `src` and `dst`
+ *                 as if they were menus. Therefore, to copy the value seen by
+ *                 the user (i.e. the vocabName of `src`), a database query is
+ *                 performed. The query determines the which vocabId of `dst`
+ *                 will make it display the same vocabName as `src`.
+ *
+ *                 If `doFindVocabId` is false, the value returned by
+ *                 `getFieldValue` is copied, without any database accesses.
+ */
+void copyFieldValue(String src, String dst, Boolean doFindVocabId) {
+  String vocabIdSrc   = getFieldValue(src);
+  String vocabNameSrc = getFieldValue(src, true);
+
+  String attrNameSrc = getAttributeName(src);
+  String attrNameDst = getAttributeName(dst);
+
+  if (attrNameSrc.equals(attrNameDst) || !doFindVocabId) {
+    setFieldValue(dst, vocabIdSrc);
+    return;
+  }
+
+  if (!setMenuValue(dst, vocabNameSrc)) {
+    // Fall back to dumb field copying
+    copyFieldValue(src, dst, false);
+  }
+}
+
+boolean isSelected(String ref, String vocabName) {
+  String vocabNameActual = getMenuValue(ref);
+
+  if (vocabNameActual == null)
+    return vocabNameActual == vocabName;
+  else
+    return vocabNameActual.equals(vocabName);
+}
+
+void clearField(String ref) {
+  switch(getType(ref)) {
+    case "dropdown": setFieldValue(ref, null); break;
+    case "list":     return;
+    default:         setFieldValue(ref, "");
+  }
+}
+
+void inheritFieldValue(
+    String src,
+    String dst,
+    boolean doCheckParent,
+    boolean doFindVocabId
+) {
+  String fun = "";
+  fun += "if (!{check} || getDisplayedTabGroup().equals(\"{parent}\"))";
+  fun += "  copyFieldValue(\"{src}\", \"{dst}\", {find})";
+
+  fun = replaceFirst(fun, "{check}",  doCheckParent + "");
+  fun = replaceFirst(fun, "{parent}", getTabGroupRef(src));
+  fun = replaceFirst(fun, "{src}",    src);
+  fun = replaceFirst(fun, "{dst}",    dst);
+  fun = replaceFirst(fun, "{find}",   doFindVocabId + "");
+
+
+  String dstParent = getTabGroupRef(dst);
+  if (isFlaggedNodata(dstParent)) addOnEvent(dstParent, "show",   fun);
+  else                            addOnEvent(dstParent, "create", fun);
+}
+
+/* If `doCheckParent`, then the value at `src` will only be inherited to `dst`
+ * if `getTabGroupRef(src)` was the previously displayed tab group.
+ */
+void inheritFieldValue(String src, String dst, boolean doCheckParent) {
+  inheritFieldValue(src, dst, doCheckParent, false);
+}
+
+void inheritFieldValue(String src, String dst) {
+  inheritFieldValue(src, dst, true);
+}
+
+
+
+/**************************** NEW TAB REDIRECTION *****************************/
+/* Causes a call to `newTab("tab/path")` to take the user to the specified    */
+/* tab.                                                                       */
+/******************************************************************************/
+
+void newTab(String tab, Boolean resolveTabGroups) {
+  if (!resolveTabGroups) {
+    return newTab(tab);
+  }
+
+  String tabGroupRef = getTabGroupRef(tab);
+  String tabRef      = getTabRef     (tab);
+
+  if (!isDisplayed(tabGroupRef)) newTabGroup(tabGroupRef);
+  if (!isNull     (tabRef     )) newTab     (tabRef);
+}
+
+/******************************************************************************/
+/*                           DROPDOWN VALUE GETTER                            */
+/*                                                                            */
+/* For consistency with `getListItemValue()`.                                 */
+/******************************************************************************/
+String DROPDOWN_ITEM_VALUE = null;
+
+String getDropdownItemValue() {
+  return DROPDOWN_ITEM_VALUE;
+}
+
+addOnEvent("Scan_Record/Tab/File_Type", "click", "DROPDOWN_ITEM_VALUE = getFieldValue(\"Scan_Record/Tab/File_Type\")");
+addOnEvent("Scan_Record/Tab/Language", "click", "DROPDOWN_ITEM_VALUE = getFieldValue(\"Scan_Record/Tab/Language\")");
+addOnEvent("Scan_Record/Tab/Origin", "click", "DROPDOWN_ITEM_VALUE = getFieldValue(\"Scan_Record/Tab/Origin\")");
+addOnEvent("Scan_Record/Tab/Research", "click", "DROPDOWN_ITEM_VALUE = getFieldValue(\"Scan_Record/Tab/Research\")");
+
+/******************************************************************************/
+/*                             MENU VALUE GETTER                              */
+/*                                                                            */
+/* Provides simple ways of getting a menu's vocabname as opposed to the       */
+/* default, which is the vocabid.                                             */
+/******************************************************************************/
+// Map from vocabid to vocabname. Populated by `fetchMenuValues()`.
+Map VOCABID_TO_VOCABNAME    = null;
+Map VOCABNAME_TO_VOCABID    = null;
+Map ATTRIB_NAME_TO_VOCABIDS = null;
+
+void setVocabId(String attrName, String vocabName, String vocabId) {
+  String key = attrName + SEP + vocabName;
+  String val = vocabId;
+
+  VOCABNAME_TO_VOCABID.put(key, val);
+}
+
+String getVocabId(String attrName, String vocabName) {
+  return VOCABNAME_TO_VOCABID.get(attrName + SEP + vocabName);
+}
+
+void addVocabId(String attrName, String vocabId) {
+  if (ATTRIB_NAME_TO_VOCABIDS == null)
+    ATTRIB_NAME_TO_VOCABIDS = new HashMap();
+
+  List vocabIds = ATTRIB_NAME_TO_VOCABIDS.get(attrName);
+  if (vocabIds == null) {
+    vocabIds = new ArrayList();
+    ATTRIB_NAME_TO_VOCABIDS.put(attrName, vocabIds);
+  }
+
+  vocabIds.add(vocabId);
+}
+
+List getVocabIdsFromAttribName(String attribName) {
+  List vocabIds = ATTRIB_NAME_TO_VOCABIDS.get(attribName);
+  if (vocabIds == null) return new ArrayList();
+  else                  return vocabIds;
+}
+
+List getVocabIdsFromRef(String ref) {
+  String attribName = getAttributeName(ref);
+  return getVocabIdsFromAttribName(attribName);
+}
+
+/*
+ * Initialises `VOCABID_TO_VOCABNAME` with the (vocabid -> vocabname) mapping of
+ * every menu.
+ */
+void fetchMenuValues() {
+  VOCABID_TO_VOCABNAME = new HashMap();
+  VOCABNAME_TO_VOCABID = new HashMap();
+
+  String q = "";
+  q += "    SELECT vocabid, vocabname, attributename";
+  q += "      FROM vocabulary";
+  q += " LEFT JOIN attributekey";
+  q += "     USING (attributeid)";
+
+  FetchCallback populateHashMap = new FetchCallback() {
+    onFetch(result) {
+      for (row : result) {
+        String vocabId   = row.get(0);
+        String vocabName = row.get(1);
+        String attrName  = row.get(2);
+
+        // Populate VOCABID_TO_VOCABNAME
+        VOCABID_TO_VOCABNAME.put(vocabId, vocabName);
+
+        // Populate VOCABNAME_TO_VOCABID
+        setVocabId(attrName, vocabName, vocabId);
+
+        // Populate ATTRIB_NAME_TO_VOCABIDS
+        addVocabId(attrName, vocabId);
+      }
+    }
+  };
+
+  fetchAll(q, populateHashMap);
+}
+
+fetchMenuValues();
+
+/* Returns a menu's vocabname, instead of the (counter-intuitive) vocabid.
+ */
+String getFieldValue(String ref, Boolean doConvertVocabIds) {
+  if (!doConvertVocabIds) {
+    return getFieldValue(ref);
+  }
+
+  String val       = getFieldValue(ref);
+  String vocabName = VOCABID_TO_VOCABNAME.get(val);
+
+  if (val       == null) return "";
+  if (vocabName == null) return "";
+  return vocabName;
+}
+
+/* Shorthand for writing getFieldValue(ref, true). This function's use is
+ * discouraged in favour of writing `getFieldValue(ref, true)`.
+ */
+String getMenuValue(String ref) {
+  return getFieldValue(ref, true);
+}
+
+/******************************************************************************/
+/*                                 ACTION BAR                                 */
+/******************************************************************************/
+addActionBarItem("clean_synced_files", new ActionButtonCallback() {
+  actionOnLabel() {
+    "{Clean_Synced_Files}";
+  }
+  actionOn() {
+    cleanSyncedFiles();
+  }
+});
+
+addActionBarItem("sync", new ToggleActionButtonCallback() {
+  actionOnLabel() {
+    "{Disable_Sync}";
+  }
+  actionOn() {
+    setSyncEnabled(false);
+    setFileSyncEnabled(false);
+    showToast("{Sync_Disabled}");
+  }
+  isActionOff() {
+    isSyncEnabled();
+  }
+  actionOffLabel() {
+    "{Enable_Sync}";
+  }
+  actionOff() {
+    setSyncEnabled(true);
+    setFileSyncEnabled(true);
+    showToast("{Sync_Enabled}");
+  }
+});
+
+addActionBarItem("internal_gps", new ToggleActionButtonCallback() {
+  actionOnLabel() {
+    "{Disable_Internal_GPS}";
+  }
+  actionOn() {
+    stopGPS();
+    showToast("{Internal_GPS_Disabled}");
+    updateGPSDiagnostics();
+  }
+  isActionOff() {
+    isInternalGPSOn();
+  }
+  actionOffLabel() {
+    "{Enable_Internal_GPS}";
+  }
+  actionOff() {
+    if(isExternalGPSOn()) {
+      stopGPS();
+    }
+    startInternalGPS();
+    showToast("{Internal_GPS_Enabled}");
+    updateGPSDiagnostics();
+  }
+});
+
+addActionBarItem("external_gps", new ToggleActionButtonCallback() {
+  actionOnLabel() {
+    "{Disable_External_GPS}";
+  }
+  actionOn() {
+    stopGPS();
+    if (isBluetoothConnected()) {
+      showToast("{External_GPS_Disabled}");
+    } else {
+      showToast("{Please_Enable_Bluetooth}");
+    }
+    updateGPSDiagnostics();
+  }
+  isActionOff() {
+    isExternalGPSOn();
+  }
+  actionOffLabel() {
+    "{Enable_External_GPS}";
+  }
+  actionOff() {
+    if(isInternalGPSOn()) {
+      stopGPS();
+    }
+    startExternalGPS();
+    if(isBluetoothConnected()) {
+      showToast("{External_GPS_Enabled}");
+    } else {
+      showToast("{Please_Enable_Bluetooth}");
+      this.actionOn();
+    }
+    updateGPSDiagnostics();
+  }
+});
+
+/******************************************************************************/
+/*                                    GPS                                     */
+/******************************************************************************/
+
+
+void updateGPSDiagnostics() {
+  String diagnosticsRef = "";
+  if (diagnosticsRef.equals("")) {
+    return;
+  }
+
+  String status         = "";
+  String previousStatus = getFieldValue(diagnosticsRef);
+  String notInitialised = "{GPS_is_not_initialised}";
+
+  // Check if GPS is initialised or was previously initialised.
+  if (!isExternalGPSOn() && !isInternalGPSOn()) {
+    if (!isNull(previousStatus) && !previousStatus.equals(notInitialised)) { // previous gps status is some last valid coordinate.
+      // This is hackish. Arch16n substitution happens only at display-time, but the following if clause requires substitution to have happened at run-time
+      String error = "";
+      error = "{GPS_is_no_longer_initialised}. {Previous_status}:";
+      setFieldValue(diagnosticsRef, error);   // Arch16n entry is substituted after this
+      error = getFieldValue(diagnosticsRef);
+
+      // check that error message wasn't previously appended to the previous status message.
+      if (previousStatus.length()    >= error.length() &&
+          previousStatus.subSequence(0, error.length()).equals(error)) {
+        status = previousStatus;
+      } else {
+        status = error + "\n" + previousStatus;
+      }
+    } else {
+      status = notInitialised;
+    }
+  } else {
+    status += "{Internal_GPS}: ";
+    if (isInternalGPSOn())
+    {
+      status += "{on}";
+    } else {
+      status += "{off}";
+    }
+    status += "\nExternal GPS: ";
+    if (isExternalGPSOn())
+    {
+      if (isBluetoothConnected()) {
+        status += "{on_and_bluetooth_connected}";
+      } else {
+        status += "{on_and_bluetooth_disconnected}";
+      }
+    } else {
+      status += "{off}";
+    }
+    Object position = getGPSPosition();
+    if (position != null) {
+      Object projPosition = getGPSPositionProjected();
+      status += "\n{Latitude}: " + position.getLatitude();
+      status += "   {Longitude}: " + position.getLongitude();
+      status += "\n{Northing}: " + projPosition.getLatitude();
+      status += "   {Easting}: " + projPosition.getLongitude();
+      status += "\n{Accuracy}: " + getGPSEstimatedAccuracy();
+    } else {
+      status += "\n{Position}: {no_GPS_position_could_be_found}";
+    }
+  }
+  setFieldValue(diagnosticsRef, status);
+}
+
+/******************************************************************************/
+/*                                 USER LOGIN                                 */
+/******************************************************************************/
+{
+  userId           = "1";
+  String nameFirst = "";
+  String nameLast  = "";
+  String email     = "";
+
+  User user = new User(userId, nameFirst, nameLast, email);
+  setUser(user);
+}
+
+String userMenuPath = "User/User/Users";
+
+void populateListForUsers(){
+  String getNonDeletedUsersQuery = "SELECT userid, fname || ' ' || lname "+
+                                   "  FROM user "+
+                                   " WHERE userdeleted is null;";
+
+  fetchAll(getNonDeletedUsersQuery, new FetchCallback() {
+    onFetch(result) {
+      populateList(userMenuPath, result);
+    }
+  });
+}
+
+void selectUser() {
+  String userVocabId = getListItemValue();
+  if (isNull(userVocabId)) {
+    username = "";
+    userid   = "";
+    return;
+  }
+
+  String q = "";
+  q += "SELECT userid, fname, lname, email, password";
+  q += "  FROM user ";
+  q += " WHERE userid = '{userId}'";
+  q  = replaceFirst(q, "{userId}", userId);
+
+  FetchCallback callback = new FetchCallback() {
+    onFetch(result) {
+      userId           = result.get(0);
+      String nameFirst = result.get(1);
+      String nameLast  = result.get(2);
+      String email     = result.get(3);
+      String password  = result.get(4);
+      username         = nameFirst + " " + nameLast;
+
+      User user = new User(userId, nameFirst, nameLast, email, password);
+      setUser(user);
+    }
+  };
+
+  fetchOne(q, callback);
+}
+
+addOnEvent(userMenuPath, "show",  "populateListForUsers()");
+addOnEvent(userMenuPath, "click", "selectUser()");
+
+/******************************************************************************/
+/*                              MENU POPULATION                               */
+/******************************************************************************/
+/** Fetches the contents of a specifed vocabulary and stores it in the given list. **/
+void fetchVocab(String vocabName, List storageList) {
+  fetchVocab(vocabName, storageList, null);
+}
+void fetchVocab(String vocabName, List storageList, String callbackFunction) {
+  fetchAll("select vocabid, vocabname from vocabulary left join attributekey using (attributeid) where attributename = '" + vocabName + "';", new FetchCallback() {
+    onFetch(result) {
+      storageList.addAll(result);
+      Log.d("fetchVocab()", "Fetched vocabulary \"" + vocabname + "\" contents: " + result.toString());
+      if (callbackFunction != null && !isNull(callbackFunction)) {
+        execute(callbackFunction);
+      }
+    }
+  });
+}
+
+/** Wrapper for to make a vocab without an exlusion list **/
+void makeVocab(String type, String path, String attrib) {
+  makeVocab(type, path, attrib, null);
+}
+
+/** Vocab Population **/
+/* Populates the path specified vocabulary from the database based on the given attribute name, where type 
+is the type of the vocab to populate (PictureGallery, HierarchicalPictureGallery, CheckBoxGroup, DropDown, HierarchicalDropDown, RadioGroup or List). */
+void makeVocab(String type, String path, String attrib, List vocabExclusions) {
+    makeVocab(type, path, attrib, vocabExclusions, null);
+}
+
+/* Populates the path specified vocabulary from the database based on the given attribute name, where type 
+is the type of the vocab to populate (PictureGallery, HierarchicalPictureGallery, CheckBoxGroup, DropDown, HierarchicalDropDown, RadioGroup or List). */
+void makeVocab(String type, String path, String attrib, List vocabExclusions, String callbackFunction){
+  if (isNull(type) || isNull(path) || isNull(attrib)) {
+    Log.e("makeVocab()", "Can't make populate a vocab when the given type, path or attribute is Null");
+    return;
+  }
+
+  if (type.equals("PictureGallery")) {
+    String pictureGalleryQuery = "SELECT vocabid, vocabname, pictureurl "+
+                                 "  FROM vocabulary "+
+                                 "  LEFT OUTER JOIN attributekey USING (attributeid) "+
+                                 " WHERE attributename = '" + attrib + "' "+
+                                 " ORDER BY  vocabcountorder;";
+    fetchAll(pictureGalleryQuery, new FetchCallback() {
+      onFetch(pictures) {
+        populatePictureGallery(path, pictures);
+        if (callbackFunction != null && !isNull(callbackFunction)) {
+          execute(callbackFunction);
+        }
+      }
+    });
+    return;
+  }
+
+  if (type.equals("HierarchicalPictureGallery")) {
+    populateHierarchicalPictureGallery(path, attrib);
+    if (callbackFunction != null && !isNull(callbackFunction)) {
+      execute(callbackFunction);
+    }
+    return;
+  }
+
+  if (type.equals("HierarchicalDropDown")) {
+    // populateHierarchicalDropDown(path, attrib);
+    populateHierarchicalDropDown(path, attrib, true);
+    if (callbackFunction != null && !isNull(callbackFunction)) {
+      execute(callbackFunction);
+    }
+    return;
+  }
+
+  String getAttributeVocabQuery = "SELECT vocabid, vocabname "+
+                                  "  FROM vocabulary "+
+                                  "  JOIN attributekey USING (attributeid) "+
+                                  " WHERE attributename = '" + attrib + "' "+
+                                  " ORDER BY vocabcountorder;";
+  fetchAll(getAttributeVocabQuery,
+    new FetchCallback() {
+      onFetch(result) {
+        // print("makeVocab() result: " + result);
+        if (result!=null && result.size()>0 && vocabExclusions!=null && vocabExclusions.size()>0) {
+          List filteredVocab = new ArrayList();
+          for(item : result) {
+            if (vocabExclusions.contains(item.get(1))) {
+              Log.d("makeVocab()", "removing vocab exclusion: " + item.get(1));
+            } else {
+              filteredVocab.add(item);
+            }
+          }
+          result=filteredVocab;
+        }
+        Boolean hasNull =
+                vocabExclusions == null
+            || !vocabExclusions.contains("")
+            && !vocabExclusions.contains(null);
+        // print("makeVocab() filtered result: " + result);
+        if(type.equals("CheckBoxGroup")) {
+          populateCheckBoxGroup(path, result);
+        } else if(type.equals("DropDown")) {
+          // populateDropDown(path, result);
+          populateDropDown(path, result, hasNull);
+        } else if(type.equals("RadioGroup")) {
+          populateRadioGroup(path, result);
+        } else if(type.equals("List")) {
+          populateList(path, result);
+        }
+        if (callbackFunction != null && !isNull(callbackFunction)) {
+          execute(callbackFunction);
+        }
+      }
+    });
+}
+
+makeVocab("DropDown", "Scan_Record/Tab/File_Type", "File Type");
+makeVocab("DropDown", "Scan_Record/Tab/Language", "Language");
+makeVocab("DropDown", "Scan_Record/Tab/Origin", "Origin");
+makeVocab("DropDown", "Scan_Record/Tab/Research", "Research");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Epigraphy", "Theme Epigraphy");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Thrace", "Theme Thrace");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Archaeology", "Theme Archaeology");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Anthropology", "Theme Anthropology");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_History", "Theme History");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Geography", "Theme Geography");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Research_Topics", "Theme Research Topics");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Media", "Theme Media");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Other", "Theme Other");
+
+
+/******************************************************************************/
+/*                                 VALIDATION                                 */
+/******************************************************************************/
+/* `ref`  is a reference/path to a field
+ * `name` is a human-readable name for that field
+ * `cond` is a String containing a boolean expression that evaluates to true if
+ *        and only if the the field pair returned by this function should be
+ *        validated.
+ *
+ *  Returns a field pair (really just an ArrayList).
+ */
+List fieldPair(String ref, String name, String cond) {
+  List fp = new ArrayList();
+  fp.add(ref);
+  fp.add(name);
+  fp.add(cond);
+  return fp;
+}
+
+List fieldPair(String ref, String name) {
+  String t = "true";
+  return fieldPair(ref, name, t);
+}
+
+/* Returns true if field specified by `ref` is valid. False otherwise.
+ */
+boolean isValidField(String ref) {
+  return !isNull(getFieldValue(ref));
+}
+/* `format` can either be HTML or PLAINTEXT
+ */
+String validateFields(List fields, String format) {
+  Integer numInvalid = 0;
+
+  /* Build validation message string (and count how many invalid fields exist) */
+  String out = "{please_fill_out_the_following_fields}";
+  for(f : fields) {
+    String ref  = f.get(0); // Reference to field
+    String name = f.get(1); // Human-readable name
+    String cond = f.get(2); // Validation condition
+
+    // Only validate a field whose validation condition evaluates to `true`
+    Boolean doValidateField = (Boolean) eval(cond);
+    if (!doValidateField)
+      continue;
+
+    // Add any invalid fields to the output and tally them
+    if (!isValidField(ref)) {
+      out += "- " + name + "\n";
+      numInvalid++;
+    }
+  }
+  // All the fields are valid; just overwrite `out` with a cheery message
+  if (numInvalid == 0)
+    out = "{all_fields_contain_valid_data}";
+
+  /* Format the output as dictated by `format` */
+  if (format == "HTML") {
+    out = out.replace("\n", "<br>");
+  } else if (format == "PLAINTEXT") {
+    ;
+  }
+
+  return out;
+}
+
+void validateControl() {
+  List f = new ArrayList(); // Fields to be validated
+  f.add(fieldPair("Control/Control/Next_ID", "{Next_ID}"));
+
+  String validationMessage = validateFields(f, "PLAINTEXT");
+  showWarning("{validation_results}", validationMessage);
+}
+void validateScanRecord() {
+  List f = new ArrayList(); // Fields to be validated
+  f.add(fieldPair("Scan_Record/Tab/ID", "{ID}"));
+  f.add(fieldPair("Scan_Record/Tab/PDF_Output_Name", "{PDF_Output_Name}"));
+
+  String validationMessage = validateFields(f, "PLAINTEXT");
+  showWarning("{validation_results}", validationMessage);
+}
+
+
+/******************************************************************************/
+/*                                 AUTOSAVING                                 */
+/******************************************************************************/
+Map tabgroupToUuid = Collections.synchronizedMap(new HashMap());
+
+String getUuid(String tabgroup) {
+  return tabgroupToUuid.get(tabgroup);
+}
+
+void setUuid(String tabgroup, String uuid) {
+  tabgroupToUuid.put(tabgroup, uuid);
+}
+
+void saveTabGroup(String tabgroup) {
+  saveTabGroup(tabgroup, "");
+}
+
+void saveTabGroup(String tabgroup, String callback) {
+  Boolean enableAutosave      = true;
+  String  id                  = getUuid(tabgroup);
+  List    geometry            = null;
+  List    attributes          = null;
+  String  parentTabgroup_     = parentTabgroup;
+  String  parentTabgroupUuid_ = getUuid(parentTabgroup_);
+  Boolean userWasSet          = !username.equals("");
+
+  callback += "; onSave" + getArchEntTypePascalCased(tabgroup) + "__()";
+
+  parentTabgroup = null;
+
+  SaveCallback saveCallback  = new SaveCallback() {
+    onSave(uuid, newRecord) {
+      setUuid(tabgroup, uuid);
+      // Make a child-parent relationship if need be.
+      if (
+          newRecord &&
+          !isNull(parentTabgroup_) &&
+          !isNull(parentTabgroupUuid_)
+      ) {
+        String rel = "";
+        rel += parentTabgroup_.replaceAll("_", " ");
+        rel += " - ";
+        rel += tabgroup.replaceAll("_", " ");
+        saveEntitiesToHierRel(
+          rel,
+          parentTabgroupUuid_,
+          uuid,
+          "Parent Of",
+          "Child Of",
+          callback
+        );
+      } else {
+        execute(callback);
+      }
+
+      // This fixes an interesting bug. Without this, if a user was not set
+      // (by calling `setUser`) at the time `saveTabGroup` was first called, but
+      // set by the time `onSave` was called, the tab group is saved correctly
+      // the first time only.
+      //
+      // Adding this allows subsequent saves to succeed. Presumably it plays
+      // some role in helping FAIMS associate the correct user with a record.
+      if (!userWasSet) {
+        saveTabGroup(tabgroup, callback);
+      }
+
+    }
+    onError(message) {
+      showToast(message);
+    }
+  };
+
+  saveTabGroup(tabgroup, id, geometry, attributes, saveCallback, enableAutosave);
+}
+
+void setToTimestampNow(String ref) {
+  String now = getTimestampNow();
+  setFieldValue(ref, now);
+}
+
+String getTimestampNow() {
+  String fmt = "yyyy-MM-dd HH:mm:ssZ";
+  return getTimestampNow(fmt);
+}
+
+String getTimestampNow(String fmt) {
+  date    = new Date();
+  dateFmt = new java.text.SimpleDateFormat(fmt);
+  dateStr = dateFmt.format(date);
+
+  // Insert colon into timezone (e.g. +1000 -> +10:00)
+  String left; String right;
+
+  left    = dateStr.substring(0, dateStr.length() - 2);
+  right   = dateStr.substring(   dateStr.length() - 2);
+  dateStr = left + ":" + right;
+
+  return dateStr;
+}
+
+void populateAuthorAndTimestamp(String tabgroup) {
+  Map tabgroupToAuthor    = new HashMap();
+  Map tabgroupToTimestamp = new HashMap();
+  
+  
+  String authorPath    = tabgroupToAuthor.get(tabgroup);
+  String timestampPath = tabgroupToTimestamp.get(tabgroup);
+
+  String authorVal    = username;
+  String timestampVal = getTimestampNow();
+
+  if (!isNull(authorPath))    setFieldValue(authorPath,    authorVal);
+  if (!isNull(timestampPath)) setFieldValue(timestampPath, timestampVal);
+}
+
+void onShowScanRecord () {
+  saveTabGroup("Scan_Record");
+}
+
+addOnEvent("Scan_Record", "show", "onShowScanRecord()");
+
+void onClickUserUserUsers () {
+  newTab("Control", true);
+}
+
+void onClickControlControlCreateNewRecord () {
+  parentTabgroup__ = "Control";
+  newScanRecord();
+}
+
+
+addOnEvent("User/User/Users", "click", "onClickUserUserUsers()");
+addOnEvent("Control/Control/Create_New_Record", "click", "onClickControlControlCreateNewRecord()");
+
+/******************************************************************************/
+/*                   AUDIO, CAMERA, FILE AND VIDEO BINDINGS                   */
+/******************************************************************************/
+
+
+addOnEvent("Scan_Record/Files/Files_Button_1", "click", "attachFileTo(\"Scan_Record/Files/Files\")");
+
+
+/******************************************************************************/
+/*                 BINDINGS FOR 'VIEW ATTACHED FILES' BUTTONS                 */
+/******************************************************************************/
+
+
+/******************************************************************************/
+/*                             NAVIGATION DRAWER                              */
+/******************************************************************************/
+void removeNavigationButtons() {
+  removeNavigationButton("new");
+  removeNavigationButton("duplicate");
+  removeNavigationButton("delete");
+  removeNavigationButton("validate");
+}
+
+void addNavigationButtons(String tabgroup) {
+  removeNavigationButtons();
+  List tabgroupsToValidate = new ArrayList();
+  tabgroupsToValidate.add("Control");
+  tabgroupsToValidate.add("Scan_Record");
+  addNavigationButton("new", new ActionButtonCallback() {
+    actionOnLabel() {
+      "{New}";
+    }
+    actionOn() {
+      if(isNull(getUuid(tabgroup))) {
+        showAlert(
+            "{Warning}",
+            "{The_current_record_has_not_been_saved_yet}",
+            fun2str("newRecord", new Object[]{tabgroup, true}),
+            ""
+        );
+      } else {
+        newRecord(tabgroup, true);
+        showToast("{New_record_created}");
+      }
+    }
+  }, "success");
+  addNavigationButton("duplicate", new ActionButtonCallback() {
+    actionOnLabel() {
+      "{Duplicate}";
+    }
+    actionOn() {
+      if(!isNull(getUuid(tabgroup))) {
+        duplicateRecord(tabgroup);
+      } else {
+        showWarning("{Warning}", "{This_record_is_unsaved_and_cannot_be_duplicated}");
+      }
+    }
+  }, "primary");
+  addNavigationButton("delete", new ActionButtonCallback() {
+    actionOnLabel() {
+      "{Delete}";
+    }
+    actionOn() {
+      deleteRecord(tabgroup);
+    }
+  }, "danger");
+  if (tabgroupsToValidate.contains(tabgroup)) {
+    addNavigationButton("validate", new ActionButtonCallback() {
+      actionOnLabel() {
+        "{Validate}";
+      }
+      actionOn() {
+        String validationFunction = "validate" + tabgroup.replaceAll("_", "") + "()";
+        eval(validationFunction);
+      }
+    }, "default");
+  }
+}
+
+/******************************************************************************/
+/*        ENTITY AND RELATIONSHIP SAVING AND LOADING HELPER FUNCTIONS         */
+/******************************************************************************/
+/** Saves two entity id's as a relation. **/
+void saveEntitiesToRel(String type, String entity1, String entity2) {
+  String callback = null;
+  saveEntitiesToRel(type, entity1, entity2, callback);
+}
+
+/** Saves two entity id's as a relation with some callback executed. **/
+void saveEntitiesToRel(String type, String entity1, String entity2, String callback) {
+  String e1verb = null;
+  String e2verb = null;
+  saveEntitiesToHierRel(type, entity1, entity2, e1verb, e2verb, callback);
+}
+
+/** Saves two entity id's as a hierachical relation with some callback executed. **/
+void saveEntitiesToHierRel(String type, String entity1, String entity2, String e1verb, String e2verb, String callback) {
+  if (isNull(entity1) || isNull(entity2)) return;
+  saveRel(null, type, null, null, new SaveCallback() {
+    onSave(rel_id, newRecord) {
+      addReln(entity1, rel_id, e1verb);
+      addReln(entity2, rel_id, e2verb);
+      if(!isNull(callback)) {
+         execute(callback);
+      }
+    }
+    onError(message) {
+      Log.e("saveEntitiesToHierRel", message);
+      showToast(message);
+    }
+  });
+}
+
+// Makes a new record of the given tabgroup
+void newRecord(String tabgroup) {
+  boolean doUpdateRelVars = false;
+  newRecord(tabgroup, doUpdateRelVars);
+}
+
+void newRecord(String tabgroup, boolean doUpdateRelVars) {
+  if (doUpdateRelVars) {
+    String uuidOld = getUuid(getDisplayedTabGroup());
+    String q       = getDuplicateRelnQuery(uuidOld); // We're not duplicating
+                                                     // anything, just getting
+                                                     // the parent's UUID.
+
+    cancelTabGroup(tabgroup, false);
+
+    FetchCallback updateRelVars = new FetchCallback() {
+      onFetch(result) {
+        if (result != null && result.size() >= 1) {
+          parentTabgroup   = result.get(0).get(4);
+          parentTabgroup   = parentTabgroup.replaceAll(" ", "_");
+          parentTabgroup__ = parentTabgroup;
+        }
+
+        newRecord(tabgroup, false);
+      }
+    };
+    fetchAll(q, updateRelVars);
+    return;
+  }
+
+  String newTabGroupFunction = "new" + tabgroup.replaceAll("_", "") + "()"; // Typical value: "newTabgroup()"
+  eval(newTabGroupFunction);
+
+  Log.d("newRecord", tabgroup);
+}
+
+// Deletes the current record of the given tabgroup
+void deleteRecord(String tabgroup) {
+  String deleteTabGroupFunction = "delete" + tabgroup.replaceAll("_", "") + "()"; // Typical value: "deleteTabgroup()"
+  eval(deleteTabGroupFunction);
+
+  Log.d("deleteRecord", tabgroup);
+}
+
+// Duplicates the current record of the given tabgroup
+void duplicateRecord(String tabgroup) {
+  dialog = showBusy("Duplicating", "Please wait...");
+
+  String duplicateTabGroupFunction = "duplicate" + tabgroup.replaceAll("_", "") + "()"; // Typical value: "duplicateTabgroup()"
+  eval(duplicateTabGroupFunction);
+
+  Log.d("duplicateRecord", tabgroup);
+}
+
+// generic fetch saved attributes query
+String getDuplicateAttributeQuery(String originalRecordID, String attributesToDupe) {
+  if (attributesToDupe.equals("")) {
+    attributesToDupe = "''";
+  }
+  String duplicateQuery = "SELECT attributename, freetext, vocabid, measure, certainty " +
+                          "  FROM latestnondeletedaentvalue JOIN attributekey USING (attributeid) " +
+                          " WHERE attributename IN ('', "+attributesToDupe+") " +
+                          "   AND uuid = '"+originalRecordID+"'; ";
+  return duplicateQuery;
+}
+
+String getDuplicateRelnQuery(String originalRecordID) {
+  String dupeRelnQuery = "SELECT relntypename, parentparticipatesverb, childparticipatesverb, parentuuid, parentaenttypename, childaenttypename"+
+                         "  FROM parentchild join relationship using (relationshipid) "+
+                         "  JOIN relntype using (relntypeid) "+
+                         " WHERE childuuid = '"+originalRecordID+"' " +
+                         "   AND parentparticipatesverb = 'Parent Of' ";
+  return dupeRelnQuery;
+}
+
+void makeDuplicateRelationships(fetchedAttributes, String newUuid){
+  Log.e("Module", "makeDuplicateRelationships");
+  for (savedAttribute : fetchedAttributes){
+    String relntypename           = savedAttribute.get(0);
+    String parentparticipatesverb = savedAttribute.get(1);
+    String childparticipatesverb  = savedAttribute.get(2);
+    String parentUuid             = savedAttribute.get(3);
+    String childArchEntType       = savedAttribute.get(5);
+
+    String onSaveRel              = "onSave" + childArchEntType.replaceAll(" ", "") + "__()";
+
+    saveEntitiesToHierRel(
+        relntypename,
+        parentUuid,
+        newUuid,
+        parentparticipatesverb,
+        childparticipatesverb,
+        onSaveRel
+    );
+  }
+}
+
+// generic get extra attributes
+List getExtraAttributes(fetchedAttributes) {
+  List extraAttributes = createAttributeList();
+  Log.d("Module", "Duplicating fetched attributes: " + fetchedAttributes.toString());
+  for (savedAttribute : fetchedAttributes) {
+    extraAttributes.add(
+      createEntityAttribute(
+        savedAttribute.get(0),
+        savedAttribute.get(1),
+        savedAttribute.get(2),
+        savedAttribute.get(3),
+        savedAttribute.get(4)
+      )
+    );
+  }
+  return extraAttributes;
+}
+
+void loadEntity() {
+  loadEntity(false);
+}
+void loadEntity(Boolean isDropdown) {
+  if (isDropdown) {
+    loadEntityFrom(getDropdownItemValue());
+  } else {
+    loadEntityFrom(getListItemValue());
+  }
+}
+
+void loadEntityFrom(String entityID) {
+  if (isNull(entityID)) {
+    return;
+  }
+
+  String getEntTypeNameQ = "SELECT aenttypename " +
+                           "  FROM latestnondeletedarchent " +
+                           "  JOIN aenttype " +
+                           " USING (aenttypeid) " +
+                           " WHERE uuid = '" + entityID + "'";
+  fetchAll(getEntTypeNameQ, new FetchCallback() {
+    onFetch(result) {
+      if (
+          result               == null ||
+          result       .size() == 0    ||
+          result.get(0).size() == 0
+      ) {
+        String head  = "{err_load_entity_head}";
+        String body  = "{err_load_entity_body}";
+        showWarning(head, body);
+        return;
+      }
+
+      String archEntName = result.get(0).get(0).replaceAll(" ", "");
+      String loadFunction = "load" + archEntName + "From(entityID)"; // Typical value: loadContextFrom(entityID)
+      eval(loadFunction);
+    }
+  });
+}
+
+void newScanRecord (){
+  String tabgroup = "Scan_Record";
+  if (isNull("Control/Control/Next_ID")) {
+    showWarning("{Alert}", "{A_next_ID_has_not_been_entered_please_provide_one}");
+    return;
+  }
+
+  setUuid(tabgroup, null);
+  newTabGroup(tabgroup);
+  populateAuthorAndTimestamp(tabgroup);
+  populateEntityListsInTabGroup(tabgroup);
+  incAutoNum("Scan_Record/Tab/ID");
+
+  onCreateScanRecord__();
+}
+void onCreateScanRecord__(){
+  String ref      = "Scan_Record";
+  String event    = "create";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+void onPrefetchScanRecord__(){
+  String ref      = "Scan_Record";
+  String event    = "prefetch";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+void onFetchScanRecord__(){
+  String ref      = "Scan_Record";
+  String event    = "fetch";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+void onSaveScanRecord__(){
+  String ref      = "Scan_Record";
+  String event    = "save";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+void onCopyScanRecord__(){
+  String ref      = "Scan_Record";
+  String event    = "copy";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+void onDeleteScanRecord__(){
+  String ref      = "Scan_Record";
+  String event    = "delete";
+  String stmtsStr = getStatementsString(ref, event);
+  execute(stmtsStr);
+}
+void duplicateScanRecord(){
+  String tabgroup = "Scan_Record";
+  String uuidOld = getUuid(tabgroup);
+  setUuid(tabgroup, "");
+  disableAutoSave(tabgroup);
+  incAutoNum("Scan_Record/Tab/ID");
+  clearGpsInTabGroup(tabgroup);
+  populateAuthorAndTimestamp(tabgroup);
+  populateEntityListsInTabGroup(tabgroup);
+  populateFileList("Scan_Record/Files/Files", new ArrayList());
+  onCopyScanRecord__();
+
+  saveCallback = new SaveCallback() {
+    onSave(uuid, newRecord) {
+      setUuid(tabgroup, uuid);
+
+      fetchAll(getDuplicateRelnQuery(uuidOld), new FetchCallback(){
+        onFetch(result) {
+          Log.e("Module", result.toString());
+
+          if (result != null && result.size() >= 1) {
+            parentTabgroup__ = result.get(0).get(4);
+            parentTabgroup__ = parentTabgroup__.replaceAll(" ", "_");
+          }
+
+          makeDuplicateRelationships(result, getUuid(tabgroup));
+
+          showToast("{Duplicated_record}");
+          dialog.dismiss();
+        }
+      });
+
+      saveTabGroup(tabgroup);
+    }
+  };
+
+  String extraDupeAttributes = "";
+  fetchAll(getDuplicateAttributeQuery(uuidOld, extraDupeAttributes), new FetchCallback(){
+    onFetch(result) {
+      excludeAttributes = new ArrayList();
+
+      excludeAttributes.add("Files");
+
+      duplicateTabGroup(tabgroup, null, getExtraAttributes(result), excludeAttributes, saveCallback);
+    }
+  });
+}
+void deleteScanRecord(){
+  String tabgroup = "Scan_Record";
+  if (isNull(getUuid(tabgroup))) {
+    cancelTabGroup(tabgroup, true);
+  } else {
+    showAlert("{Confirm_Deletion}", "{Press_OK_to_Delete_this_Record}", "reallyDeleteScanRecord()", "doNotDelete()");
+  }
+}
+void reallyDeleteScanRecord (){
+  String tabgroup = "Scan_Record";
+
+  deleteArchEnt(getUuid(tabgroup));
+  cancelTabGroup(tabgroup, false);
+  populateEntityListsOfArchEnt(tabgroup);
+  onDeleteScanRecord__();
+}
+addOnEvent("Scan_Record", "save", "populateEntityListsOfArchEnt(\"Scan_Record\")");
+
+void doNotDelete(){
+  showToast("{Delete_Cancelled}");
+}
+
+addOnEvent("User", "show", "removeNavigationButtons()");
+addOnEvent("Control", "show", "removeNavigationButtons()");
+addOnEvent("Scan_Record", "show", "removeNavigationButtons()");
+addOnEvent("Scan_Record", "show", "addNavigationButtons(\"Scan_Record\")");
+
+/******************************************************************************/
+/*                                   SEARCH                                   */
+/******************************************************************************/
+addOnEvent("Control/Search"               , "show"  , "search()");
+addOnEvent("Control/Search/Entity_List"   , "click" , "loadEntity();");
+addOnEvent("Control/Search/Search_Button" , "click" , "search()");
+addOnEvent("Control/Search/Search_Term"   , "click" , "clearSearch()");
+
+
+
+void clearSearch(){
+  setFieldValue("Control/Search/Search_Term","");
+}
+
+void search(){
+  String refEntityList  = "Control/Search/Entity_List";
+  String refSearchTerm  = "Control/Search/Search_Term";
+  String refEntityTypes = "Control/Search/Entity_Types";
+
+  String type = "";
+  String term = getFieldValue(refSearchTerm);
+  String searchQuery = "SELECT uuid, response "+
+                       "  FROM latestNonDeletedArchEntFormattedIdentifiers  "+
+                       " WHERE uuid in (SELECT uuid "+
+                       "                  FROM latestNonDeletedArchEntIdentifiers "+
+                       "                 WHERE measure LIKE '"+term+"'||'%'  "+
+                       "                   AND ( aenttypename = '"+type+"' OR '' = '"+type+"' ) "+
+                       "                )  "+
+                       " ORDER BY response "+
+                       " LIMIT ? "+
+                       "OFFSET ? ";
+
+  populateCursorList(refEntityList, searchQuery, 25);
+  refreshTabgroupCSS("Control");
+
+  Log.d("Module", "Search query: " + searchQuery);
+}
+
+void loadScanRecordFrom(String uuid) {
+  String tabgroup = "Scan_Record";
+  setUuid(tabgroup, uuid);
+  if (isNull(uuid)) return;
+
+  FetchCallback cb = new FetchCallback() {
+    onFetch(result) {
+      populateEntityListsInTabGroup(tabgroup);
+      onFetchScanRecord__();
+    }
+  };
+
+  onPrefetchScanRecord__();
+  showTabGroup(tabgroup, uuid, cb);
+}
+
+/******************************************************************************/
+/*                          TAKE FROM GPS BUTTON(S)                           */
+/******************************************************************************/
+
+
+Map getTakeFromGpsMappings() {
+  Map tabgroupToTabRef = new HashMap();
+  
+  return tabgroupToTabRef;
+}
+
+/* Takes the current point using gps. */
+void takePoint(String tabgroup) {
+  Map tabgroupToTabRef = getTakeFromGpsMappings();
+
+  String archEntType = tabgroup.replaceAll("_", " ");
+  String currentUuid = getUuid(tabgroup);
+  if (isNull(currentUuid)){
+    showToast("{Please_enter_data_first}");
+    return;
+  }
+
+  boolean isInternalGPSOff = !isInternalGPSOn();
+  boolean isExternalGPSOff = !isExternalGPSOn();
+  Object  position = getGPSPosition();
+  if (position == null || isInternalGPSOff && isExternalGPSOff) {
+    showToast("{GPS_Not_Initialised}");
+    return;
+  }
+
+  Object projPosition = getGPSPositionProjected();
+  Double latitude     = position.getLatitude();
+  Double longitude    = position.getLongitude();
+  Double northing     = projPosition.getLatitude();
+  Double easting      = projPosition.getLongitude();
+
+  samplePoint = new Point(new MapPos(easting, northing), null, (PointStyle) null, null);
+  ArrayList geolist = new ArrayList();
+  geolist.add(samplePoint);
+
+  String accuracy = "" + getGPSEstimatedAccuracy();
+  setFieldValue(tabgroupToTabRef.get(tabgroup) + "/Accuracy", accuracy);
+
+  saveArchEnt(currentUuid, archEntType, geolist, null, new SaveCallback() {
+    onSave(uuid, newRecord) {
+      print("[takePoint()] Added geometry: " + geolist);
+      fillInGPS(tabgroup);
+    }
+  });
+}
+
+/* Sets the value of GPS views for the given tab path. */
+void fillInGPS(String tabgroup) {
+  Map tabgroupToTabRef = getTakeFromGpsMappings();
+  String currentUuid = getUuid(tabgroup);
+  if (isNull(currentUuid)) {
+    return;
+  }
+
+  String query = "SELECT x(transform(geospatialcolumn,                4326)) as longtiude, " +
+                 "       y(transform(geospatialcolumn,                4326)) as latitude, " +
+                 "       x(transform(geospatialcolumn, "+getModuleSrid()+")) as easting, " +
+                 "       y(transform(geospatialcolumn, "+getModuleSrid()+")) as northing " +
+                 "  FROM latestnondeletedarchent, vocabulary " +
+                 " WHERE uuid = '" + currentUuid + "';";
+
+  fetchOne(query, new FetchCallback() {
+    onFetch(result) {
+      print("[fillInGPS()] Fetched DB transformed geometry: " + result);
+      setFieldValue(tabgroupToTabRef.get(tabgroup) + "/Longitude" , result.get(0));
+      setFieldValue(tabgroupToTabRef.get(tabgroup) + "/Latitude"  , result.get(1));
+      setFieldValue(tabgroupToTabRef.get(tabgroup) + "/Easting"   , result.get(2));
+      setFieldValue(tabgroupToTabRef.get(tabgroup) + "/Northing"  , result.get(3));
+    }
+  });
+}
+
+void clearGpsInTabGroup(String tabgroup) {
+  Map tabgroupToTabRef = getTakeFromGpsMappings();
+
+  String tabRef = tabgroupToTabRef.get(tabgroup);
+  if (isNull(tabRef)) return;
+
+  clearGpsInTab(tabRef);
+}
+
+void clearGpsInTab(String tabRef) {
+  setFieldValue(tabRef + "/Accuracy"  , "");
+  setFieldValue(tabRef + "/Latitude"  , "");
+  setFieldValue(tabRef + "/Longitude" , "");
+  setFieldValue(tabRef + "/Easting"   , "");
+  setFieldValue(tabRef + "/Northing"  , "");
+}
+
+/*************** LOADING AND CREATION OF RECORDS FROM QR CODES ****************/
+void bindQrScanning(String refButton, String refField) {
+  String event = "click";
+
+  String stmt = fun2str("scanRecordFromQrCode", refField);
+
+  addOnEvent(refButton, event, stmt);
+}
+
+void scanRecordFromQrCode(String ref) {
+  String callback = fun2str("loadOrCreateEntityFromScannedAttrib", ref);
+  scanCode(callback);
+}
+
+void loadOrCreateEntityFromScannedAttrib(String ref) {
+  String attrName = getAttributeName(ref);
+  String attribVal  = getLastScanContents();
+
+  String q = "";
+  q += "SELECT uuid ";
+  q += "  FROM latestnondeletedaentvalue ";
+  q += "  JOIN latestnondeletedarchent USING (uuid) ";
+  q += "  JOIN attributekey            USING (attributeid) ";
+  q += " WHERE attributename = '{attrName}' ";
+  q += "   AND measure       = '{attribVal}' ";
+  q  = replaceFirst(q, "{attrName}",  attrName);
+  q  = replaceFirst(q, "{attribVal}", attribVal );
+
+  FetchCallback loadOrCreateEntity = new FetchCallback() {
+    onFetch(result) {
+      if (isNull(result) || result.size() == 0) {
+        createRecordFromScannedAttrib(ref);
+      } else {
+        String uuid = result.get(0).get(0);
+        loadEntityFrom(uuid);
+      }
+    }
+  };
+
+  fetchAll(q, loadOrCreateEntity);
+}
+
+void initScannedAttrib(String ref) {
+  String oldCode = getFieldValue(ref);
+  String newCode = getLastScanContents();
+
+  if (isNull(oldCode))
+    setFieldValue(ref, newCode);
+}
+
+void createRecordFromScannedAttrib(String ref) {
+  String tabGroup = getTabGroupRef(ref);
+  newRecord(tabGroup);
+
+  initScannedAttrib(ref);
+}
+
+
+
+/******************************************************************************/
+/*                       AUTONUMBERING HELPER FUNCTIONS                       */
+/******************************************************************************/
+/*
+ * If value of field specified by `ref` is null, sets the field to `defaultVal`,
+ * otherwise increments its value.
+ *
+ * Returns the value the field was updated to.
+ */
+Integer incField(String ref, Integer defaultVal) {
+  String val = getFieldValue(ref);
+
+  if (isNull(val)) {
+    setFieldValue(ref, defaultVal);
+    return defaultVal;
+  }
+
+  Integer inc = Integer.parseInt(val) + 1;
+  setFieldValue(ref, inc);
+  insertIntoLocalSettings(ref, inc.toString());
+
+  return inc;
+}
+
+/* Increments the field at `ref` or returns null if it does not contain a
+ * number.
+ */
+Integer incField(String ref) {
+  return incField(ref, 1);
+}
+
+List getStartingIdPaths() {
+  List l = new ArrayList();
+  l.add("Control/Control/Next_ID");
+  return l;
+}
+
+void loadStartingId(String ref) {
+  // If there's already a value in the field, we don't need to load one.
+  String val = getFieldValue(ref);
+  if (!isNull(val)) {
+    return;
+  }
+
+  // Load a value into the field. Set it to 1 if no value has been previously
+  // saved.
+  String idQ = "SELECT value FROM localSettings WHERE key = '" + ref + "';";
+  fetchOne(idQ, new FetchCallback() {
+    onFetch(result) {
+      if (isNull(result)) setFieldValue(ref, "1"          );
+      else                setFieldValue(ref, result.get(0));
+    }
+  });
+}
+
+loadStartingIds() {
+  List l = getStartingIdPaths();
+
+  for (ref : l) {
+    loadStartingId(ref);
+  }
+}
+
+addOnEvent("Control", "show", "loadStartingIds()");
+
+/*
+ * Sets bindings to save autonum'd fields whenever they're blurred.
+ */
+for (ref : getStartingIdPaths()) {
+  onFocus(ref, null, "insertIntoLocalSettings(\"" + ref + "\", getFieldValue(\"" + ref + "\"));");
+}
+
+void incAutoNum(String destPath) {
+  Map destToSource = new HashMap();
+  destToSource.put("Scan_Record/Tab/ID", "Control/Control/Next_ID");
+
+  String sourcePath = destToSource.get(destPath);
+  String destVal    = getFieldValue(sourcePath);
+  setFieldValue(destPath, destVal);
+  incField(sourcePath);
+}
+
+/******************************************************************************/
+/*                POPULATION OF ENTITY AND CHILD ENTITY LISTS                 */
+/******************************************************************************/
+/*
+ * `viewType`   the type of GUI element to be populated. It can either equal
+ *              "DropDown" or "List".
+ * `path`       the reference of the GUI element to be populated.
+ * `parentUuid` the parent in the relationship denoted by `relType`.
+ * `entType`    the type of the entities the menu will be populated with.
+ * `relType`    the name of the relationship the children are to be in with the
+ *              entity denoted by `parentUuid`.
+ */
+void populateMenuWithEntities (
+  String viewType,
+  String path,
+  String parentUuid,
+  String entType,
+  String relType
+) {
+  if (!"DropDown".equals(viewType) && !"List".equals(viewType)) {
+    Log.e("populateMenuWithEntities ", "Unexpected type '" + viewType + "'");
+    return;
+  }
+
+  String limit;
+  switch (viewType) {
+    case "DropDown": limit = "";                   break;
+    case "List":     limit = " LIMIT ? OFFSET ? "; break;
+  }
+
+  String getChildEntitiesQ = "" +
+    "SELECT childuuid, response " +
+    "  FROM (select childuuid, createdat" +
+    "          from (select childuuid, createdat, relationshipid" +
+    "                    from parentchild" +
+    "                   where parentuuid = '" + parentUuid + "' " +
+    "                   and (childaenttypename = '"+entType+"')" +
+    "                   order by createdat           " +
+    "                   )" +
+    "          JOIN (SELECT relationshipid   " +
+    "                  FROM latestnondeletedrelationship JOIN relntype USING (relntypeid)  " +
+    "                 WHERE relntypename = '"+relType+"') USING (relationshipid)" +
+    "          order by createdat desc" +
+    limit +
+    "        )  " +
+    "  JOIN latestNonDeletedArchEntFormattedIdentifiers ON (childuuid = uuid)   " +
+    "  order by createdat desc";
+
+  String getEntitiesQ = "" +
+    "SELECT uuid, response "+
+    "  FROM latestNonDeletedArchEntFormattedIdentifiers  "+
+    " WHERE uuid in (SELECT uuid "+
+    "                  FROM latestNonDeletedArchEntIdentifiers "+
+    "                 WHERE aenttypename = '"+entType+"' OR '"+entType+"' = '' " +
+    "               )  "+
+    " ORDER BY response " +
+    limit;
+
+  FetchCallback cbPopulateDropDown = new FetchCallback() {
+    onFetch(result) {
+      populateDropDown(path, result, true);
+    }
+  };
+
+  String q;
+  if (relType.equals("")) q = getEntitiesQ;
+  else                    q = getChildEntitiesQ;
+
+  switch (viewType) {
+    case "DropDown": fetchAll(q, cbPopulateDropDown); break;
+    case "List":     populateCursorList(path, q, 25); break;
+  }
+}
+
+void populateEntityListsInTabGroup(String tabGroup) {
+  if (isNull(tabGroup)) {
+    return;
+  }
+
+  for (m : ENTITY_MENUS) {
+    String path         = m[1];
+    String menuTabGroup = getTabGroupRef(path);
+    String functionCall = getEntityMenuPopulationFunction(m);
+
+    if (menuTabGroup.equals(tabGroup))
+      execute(functionCall);
+  }
+}
+
+/* Populates each list containing records whose archent type is the same as that
+ * of `tabGroup`.
+ */
+void populateEntityListsOfArchEnt(String tabGroup) {
+  if (isNull(tabGroup)) {
+    return;
+  }
+
+  String archEntTypeToPopulate = getArchEntType(tabGroup);
+
+  for (m : ENTITY_MENUS) {
+    String archEntType  = m[3];
+    String functionCall = getEntityMenuPopulationFunction(m);
+
+    if (archEntType.equals(archEntTypeToPopulate))
+      execute(functionCall);
+  }
+}
+
+String getEntityMenuPopulationFunction(String[] menuDescriptor) {
+  String viewType       = menuDescriptor[0];
+  String path           = menuDescriptor[1];
+  String parentUuidCall = menuDescriptor[2];
+  String entType        = menuDescriptor[3];
+  String relType        = menuDescriptor[4];
+
+  String functionCall = "";
+  functionCall += "populateMenuWithEntities(";
+  functionCall += "\"" + viewType       + "\"";
+  functionCall += ", ";
+  functionCall += "\"" + path           + "\"";
+  functionCall += ", ";
+  functionCall +=        parentUuidCall       ;
+  functionCall += ", ";
+  functionCall += "\"" + entType        + "\"";
+  functionCall += ", ";
+  functionCall += "\"" + relType        + "\"";
+  functionCall += ")";
+
+  return functionCall;
+}
+
+ENTITY_MENUS = new ArrayList();
+
+for (m : ENTITY_MENUS) {
+  String functionCall = getEntityMenuPopulationFunction(m);
+  execute(functionCall);
+}
+for (m : ENTITY_MENUS) {
+  String menuRef = m[1];
+
+  String ref = getTabRef(menuRef);
+  String evt = "show";
+  String cmd = "clearField(\"{menuRef}\")";
+  cmd = replaceFirst(cmd, "{menuRef}", menuRef);
+
+  addOnEvent(ref, evt, cmd);
+}
+
+
+/******************************************************************************/
+/*                             HANDWRITTEN LOGIC                              */
+/******************************************************************************/
+
+/****************************** RAW ATTACHMENTS *******************************/
+  addOnEvent("Scan_Record/Tab/Attach_New_Files", "click", "attachNewFiles()");
+  addOnEvent("Scan_Record",                      "show", "lastFileList = getFileList()");
+
+  List getFileList() {
+    String dirPath   = "/sdcard/DCIM/OpenCamera";
+    File   dir       = new File(dirPath);
+    if (!dir.exists()) {
+      return new ArrayList();
+    }
+
+    File[] fileArray = dir.listFiles();
+    List   files     = Arrays.asList(fileArray);
+           files     = new ArrayList(files);       // This makes `files` mutable
+
+    // Sort the list of files by date modified
+    Comparator compareModDate = new Comparator() {
+        public int compare(File a, File b) {
+          long aMod = a.lastModified();
+          long bMod = b.lastModified();
+
+          if (aMod > bMod) return +1;
+          if (aMod < bMod) return -1;
+          return 0;
+        }
+    };
+    Collections.sort(files, compareModDate);
+
+    return files;
+  }
+
+  String fileListToString(List files) {
+    String s = "";
+    for (i = 0; i < files.size(); i++)
+      s += files.get(i).getName() + "\n";
+    return s;
+  }
+
+  void attachAll(List files) {
+    for (i = 0; i < files.size(); i++) {
+      ref      = "Scan_Record/Files/Files";
+      filePath = files.get(i).getAbsolutePath();
+      addFile(ref, filePath);
+    }
+  }
+
+  List attachNewFiles() {
+    thisFileList = getFileList();
+
+    newFiles = new ArrayList(thisFileList);
+    newFiles = getFileList();
+    newFiles.removeAll(lastFileList);
+
+    lastFileList = thisFileList;
+
+    if (newFiles.size() == 0) {
+      showWarning("No new files found", "");
+    } else {
+      attachAll(newFiles);
+      s = fileListToString(newFiles);
+      showWarning("New files found", s);
+    }
+
+    return newFiles;
+  }
+
+/*************************** PERIOD INITIALISATION ****************************/
+/* Triggered using @POSTPROC.                                                 */
+/******************************************************************************/
+  initialisePeriods() {
+    tabgroup = "Scan_Record";
+    setFieldValue("Scan_Record/Tab/Period_From", "07/07/1937");
+    setFieldValue("Scan_Record/Tab/Period_Till", "02/09/1945");
+    keepTabGroupChanges(tabgroup);
+  }
+
+/************************** SUB-THEME INPUT: "OTHER" **************************/
+  subThemePostfixes = new ArrayList();
+  subThemePostfixes.add("Epigraphy");
+  subThemePostfixes.add("Thrace");
+  subThemePostfixes.add("Archaeology");
+  subThemePostfixes.add("Anthropology");
+  subThemePostfixes.add("History");
+  subThemePostfixes.add("Geography");
+  subThemePostfixes.add("Research_Topics");
+  subThemePostfixes.add("Media");
+  subThemePostfixes.add("Other");
+
+  // Determine vocab ID's displayed as "{Other}"
+  subThemeVocab = Collections.synchronizedList(new ArrayList());
+  otherVocabIds = Collections.synchronizedSet (new HashSet  ());
+  for (postfix : subThemePostfixes) {
+    propertyName = "Theme " + postfix.replaceAll("_", " ");
+    fetchVocab(propertyName, subThemeVocab, "getOtherVocabIds()");
+  }
+  getOtherVocabIds() {
+    for (vocabEntry : subThemeVocab) {
+      vocabId   = vocabEntry.get(0);
+      vocabName = vocabEntry.get(1);
+      if (vocabName.equals("{Other}")) {
+        otherVocabIds.add(vocabId);
+      }
+    }
+  }
+
+  otherWasSelected = new HashMap();
+  initialiseSelected() {
+    initialiseSelected(null);
+  }
+  initialiseSelected(attributes) {
+    for (postfix : subThemePostfixes) {
+      otherWasSelected.put(postfix, false);
+    }
+
+    if (attributes == null)
+      return;
+    for (postfix : subThemePostfixes) {
+      for (a : attributes) {
+        propertyName = "Theme " + postfix.replaceAll("_", " ");
+        vocabId      = a.getValue("vocab");
+        if (!a.getName().equals(propertyName)) continue;
+
+        if (otherVocabIds.contains(vocabId)) {
+          otherWasSelected.put(postfix, true);
+          break;
+        }
+      }
+    }
+  }
+
+  // Overrides autogen definition
+  newScanRecord(){
+    String tabgroup = "Scan_Record";
+
+    String autoNumSource = "";
+    autoNumSource = getFieldValue("Control/Control/Next_ID");
+    if (isNull(autoNumSource)) {
+      showWarning("{Alert}","{A_next_ID_has_not_been_entered_please_provide_one}");
+      return;
+    }
+
+    setUuid(tabgroup, null);
+    newTabGroup(tabgroup);
+    populateAuthorAndTimestamp(tabgroup);
+    String autoNumDest = "";
+    autoNumDest = "Scan_Record/Tab/ID";
+    incAutoNum(autoNumDest);
+
+    initialisePeriods();
+    initialiseSelected();
+  }
+
+  // Overrides autogen definition
+  loadScanRecordFrom(String uuid) {
+    String tabgroup = "Scan_Record";
+    setUuid(tabgroup, uuid);
+    if (isNull(uuid)) return;
+
+    cb = new FetchCallback() {
+      onFetch(result) {
+        entity = result;
+        attributes = entity.getAttributes();
+        initialiseSelected(attributes);
+      }
+    };
+    showTabGroup(tabgroup, uuid, cb);
+  }
+
+  // Returns true IFF `As` contains any of the elements in `Bs`.
+  containsAnyOf(As, Bs) {
+    for (b : Bs)
+      if (containsString(As, b))
+        return true;
+    return false;
+  }
+
+  // Returns true IFF the list of NameValuePair objects in `As` has an element
+  // whose getName method returns a string equal to `s`.
+  containsString(As, s) {
+    for (a : As) {
+      if (a.getName().equals(s))
+        return true;
+    }
+    return false;
+  }
+
+  requestMoreInput(subThemePostfix) {
+    ref = "Scan_Record/Tab/Theme_" + subThemePostfix;
+    val = getFieldValue(ref);
+
+    if (containsAnyOf(val, otherVocabIds)) {
+      if (!otherWasSelected.get(subThemePostfix)) {
+        otherWasSelected.put(subThemePostfix, true);
+
+        head  = "Additional Input Required...";
+        body  = "You selected 'Other'. Please provide an annotation on the ";
+        body += "box you checked to specify a sub-theme.";
+
+        showWarning(head, body);
+      }
+    } else {
+      otherWasSelected.put(subThemePostfix, false);
+    }
+  }
+
+  for (postfix : subThemePostfixes) {
+    ref = "Scan_Record/Tab/Theme_" + postfix;
+
+    String cb = "";
+    cb = "requestMoreInput(\"%s\")";
+    cb = cb.replaceFirst("%s", postfix);
+
+    addOnEvent(ref, "click", cb);
+  }
+
+/***************************** NAVIGATION DRAWER ******************************/
+addNavigationButtons(String tabgroup) {
+  removeNavigationButtons();
+  List tabgroupsToValidate = new ArrayList();
+  tabgroupsToValidate.add("Scan_Record");
+
+  addNavigationButton("delete", new ActionButtonCallback() {
+    actionOnLabel() {
+      "{Delete}";
+    }
+    actionOn() {
+      deleteRecord(tabgroup);
+    }
+  }, "danger");
+  if (tabgroupsToValidate.contains(tabgroup)) {
+    addNavigationButton("validate", new ActionButtonCallback() {
+      actionOnLabel() {
+        "{Validate}";
+      }
+      actionOn() {
+        String validationFunction = "validate" + tabgroup.replaceAll("_", "") + "()";
+        eval(validationFunction);
+      }
+    }, "default");
+  }
+}
+
+
+
+/******************************************************************************/
+/*                                    INIT                                    */
+/*                                                                            */
+/* Stuff which needs to be done last.                                         */
+/******************************************************************************/
+bindOnEvents();

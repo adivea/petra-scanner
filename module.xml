@@ -1,0 +1,534 @@
+<?xml version="1.0" ?>
+<!--@POSTPROC: ./postproc.sh-->
+<module suppressWarnings="true">
+
+<User f="nodata">
+  <User f="noscroll">
+    <Users t="list" f="user" l="Control"/>
+  </User>
+</User>
+
+<Control f="nodata">
+  <Control>
+    <autonum/>
+    <Create_New_Record t="button" l="Scan_Record"/>
+  </Control>
+  <search/>
+</Control>
+
+<Scan_Record>
+  <Tab>
+    Metadata
+    <ID f="id notnull autonum"/>
+    <Attach_New_Files t="button"/>
+    <File_Type>
+      <opts>
+        <opt>Journal Article</opt>
+        <opt>Book</opt>
+        <opt>Book Section</opt>
+        <opt>Conference Proceedings</opt>
+        <opt>Document</opt>
+        <opt>Image</opt>
+        <opt>Oral</opt>
+        <opt>Thesis</opt>
+        <opt>Video</opt>
+        <opt>Map</opt>
+        <opt>Other</opt>
+      </opts>
+    </File_Type>
+    <Language>
+      <opts>
+        <opt>English</opt>
+        <opt>Czech</opt>
+        <opt>French</opt>
+        <opt>German</opt>
+        <opt>Greek</opt>
+        <opt>Bulgarian</opt>
+        <opt>Other</opt>
+      </opts>
+    </Language>
+    <Origin>
+      <opts>
+        <opt>Macquarie Library</opt>
+        <opt>USyd Library</opt>
+        <opt>BSA Library</opt>
+        <opt>ASCSA Library</opt>
+        <opt>FU Berlin Library</opt>
+        <opt>Charles Uni Library</opt>
+        <opt>Bulgaria Library</opt>
+        <opt>Library Other</opt>
+        <opt>Museum</opt>
+        <opt>ILL</opt>
+        <opt>Internet</opt>
+        <opt>Academia</opt>
+        <opt>Research Gate</opt>
+        <opt>Libgen</opt>
+        <opt>My Own</opt>
+        <opt>Other Researcher</opt>
+        <opt>Random Source</opt>
+        <opt>Other</opt>
+      </opts>
+    </Origin>
+    <Research>
+      <opts>
+        <opt>Dissertation</opt>
+        <opt>Stroyno</opt>
+        <opt>TRAP</opt>
+        <opt>FAIMS</opt>
+        <opt>Teaching</opt>
+        <opt>Postdoc Research</opt>
+        <opt>Other</opt>
+      </opts>
+    </Research>
+    <PDF_Output_Name f="id notnull"/>
+    <Author_Last_name/>
+    <Author_First_Name/>
+    <Year/>
+    <Book_Title/>
+    <Chapter/>
+    <Journal/>
+    <Volume/>
+    <Issue/>
+    <Start_Page/>
+    <End_Page/>
+    <File_Reference/>
+    <!--<Theme>-->
+      <!--<opts>-->
+        <!--<opt>Epigraphy</opt>-->
+        <!--<opt>Thrace</opt>-->
+        <!--<opt>Archaeology</opt>-->
+        <!--<opt>Anthropology</opt>-->
+        <!--<opt>History</opt>-->
+        <!--<opt>Geography</opt>-->
+        <!--<opt>Research Topics/opt>-->
+        <!--<opt>Media</opt>-->
+        <!--<opt>Other</opt>-->
+      <!--</opts>-->
+    <!--</Theme>-->
+
+    <Theme_Epigraphy t="checkbox">
+      Theme: Epigraphy
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>Corpus</opt>
+        <opt>Manual</opt>
+        <opt>Theoretical</opt>
+        <opt>Case or regional study</opt>
+        <opt>Digital Epigraphy</opt>
+        <opt>Commented Inscriptions</opt>
+        <opt>Conference</opt>
+        <opt>Work in Progress</opt>
+        <opt>Paper/Poster</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Epigraphy>
+
+    <Theme_Thrace t="checkbox">
+      Theme: Thrace
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>Archaeology</opt>
+        <opt>Epigraphy</opt>
+        <opt>Numismatics</opt>
+        <opt>Conference</opt>
+        <opt>History</opt>
+        <opt>Geography</opt>
+        <opt>Society</opt>
+        <opt>Religion</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Thrace>
+
+    <Theme_Archaeology t="checkbox">
+      Theme: Archaeology
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>General</opt>
+        <opt>Funerary</opt>
+        <opt>Settlement</opt>
+        <opt>Pottery</opt>
+        <opt>Numismatics</opt>
+        <opt>Historiography and theory</opt>
+        <opt>Site Reports</opt>
+        <opt>Regional Study</opt>
+        <opt>Environmental</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Archaeology>
+
+    <Theme_Anthropology t="checkbox">
+      Theme: Anthropology
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>Social Complexity</opt>
+        <opt>Culture Contact</opt>
+        <opt>Hellenization</opt>
+        <opt>Romanization</opt>
+        <opt>Theoretical</opt>
+        <opt>Case Study</opt>
+        <opt>Excavation/Site Report</opt>
+        <opt>Linguistics</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Anthropology>
+
+    <Theme_History t="checkbox">
+      Theme: History
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>Greek</opt>
+        <opt>Roman</opt>
+        <opt>Thrace</opt>
+        <opt>Theory</opt>
+        <opt>General</opt>
+        <opt>Modern History</opt>
+        <opt>Literary Source</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_History>
+
+    <Theme_Geography t="checkbox">
+      Theme: Geography
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>Greece</opt>
+        <opt>Thrace</opt>
+        <opt>Roman Empire</opt>
+        <opt>Eastern Mediterranean</opt>
+        <opt>Western Mediterranean</opt>
+        <opt>Near East</opt>
+        <opt>Americas</opt>
+        <opt>Asia</opt>
+        <opt>Australia</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Geography>
+
+    <Theme_Research_Topics t="checkbox">
+      Theme: Research Topics
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>Literacy</opt>
+        <opt>Social Complexity</opt>
+        <opt>Digital Humanities</opt>
+        <opt>Culture Change</opt>
+        <opt>Milestones</opt>
+        <opt>Use of writing</opt>
+        <opt>Social Status</opt>
+        <opt>Data Management</opt>
+        <opt>Digital Epigraphy</opt>
+        <opt>GIS</opt>
+        <opt>Spatio-temporal Analysis</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Research_Topics>
+
+    <Theme_Media t="checkbox">
+      Theme: Media
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>Electronic — Local</opt>
+        <opt>Electronic — Australian</opt>
+        <opt>Electronic — Other</opt>
+        <opt>Historiography and theory</opt>
+        <opt>Print — Local</opt>
+        <opt>Print — Australian</opt>
+        <opt>Print — Other</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Media>
+
+    <Theme_Other t="checkbox">
+      Theme: Other
+      <str>
+        <fmt>$1</fmt>
+        <app>, </app>
+      </str>
+      <opts>
+        <opt>TRAP</opt>
+        <opt>FAIMS</opt>
+        <opt>Teaching</opt>
+        <opt>Interesting Stuff</opt>
+        <opt>Personal</opt>
+        <opt>Future Research</opt>
+        <opt>Other</opt>
+      </opts>
+    </Theme_Other>
+  </Tab>
+  <Notes>
+    <Notes/>
+  </Notes>
+  <Files>
+    <Files t="file"/>
+  </Files>
+</Scan_Record>
+
+<logic><![CDATA[
+/****************************** RAW ATTACHMENTS *******************************/
+  addOnEvent("Scan_Record/Tab/Attach_New_Files", "click", "attachNewFiles()");
+  addOnEvent("Scan_Record",                      "show", "lastFileList = getFileList()");
+
+  List getFileList() {
+    String dirPath   = "/sdcard/DCIM/OpenCamera";
+    File   dir       = new File(dirPath);
+    if (!dir.exists()) {
+      return new ArrayList();
+    }
+
+    File[] fileArray = dir.listFiles();
+    List   files     = Arrays.asList(fileArray);
+           files     = new ArrayList(files);       // This makes `files` mutable
+
+    // Sort the list of files by date modified
+    Comparator compareModDate = new Comparator() {
+        public int compare(File a, File b) {
+          long aMod = a.lastModified();
+          long bMod = b.lastModified();
+
+          if (aMod > bMod) return +1;
+          if (aMod < bMod) return -1;
+          return 0;
+        }
+    };
+    Collections.sort(files, compareModDate);
+
+    return files;
+  }
+
+  String fileListToString(List files) {
+    String s = "";
+    for (i = 0; i < files.size(); i++)
+      s += files.get(i).getName() + "\n";
+    return s;
+  }
+
+  void attachAll(List files) {
+    for (i = 0; i < files.size(); i++) {
+      ref      = "Scan_Record/Files/Files";
+      filePath = files.get(i).getAbsolutePath();
+      addFile(ref, filePath);
+    }
+  }
+
+  List attachNewFiles() {
+    thisFileList = getFileList();
+
+    newFiles = new ArrayList(thisFileList);
+    newFiles = getFileList();
+    newFiles.removeAll(lastFileList);
+
+    lastFileList = thisFileList;
+
+    if (newFiles.size() == 0) {
+      showWarning("No new files found", "");
+    } else {
+      attachAll(newFiles);
+      s = fileListToString(newFiles);
+      showWarning("New files found", s);
+    }
+
+    return newFiles;
+  }
+
+/*************************** PERIOD INITIALISATION ****************************/
+/* Triggered using @POSTPROC.                                                 */
+/******************************************************************************/
+  initialisePeriods() {
+    tabgroup = "Scan_Record";
+    setFieldValue("Scan_Record/Tab/Period_From", "07/07/1937");
+    setFieldValue("Scan_Record/Tab/Period_Till", "02/09/1945");
+    keepTabGroupChanges(tabgroup);
+  }
+
+/************************** SUB-THEME INPUT: "OTHER" **************************/
+  subThemePostfixes = new ArrayList();
+  subThemePostfixes.add("Epigraphy");
+  subThemePostfixes.add("Thrace");
+  subThemePostfixes.add("Archaeology");
+  subThemePostfixes.add("Anthropology");
+  subThemePostfixes.add("History");
+  subThemePostfixes.add("Geography");
+  subThemePostfixes.add("Research_Topics");
+  subThemePostfixes.add("Media");
+  subThemePostfixes.add("Other");
+
+  // Determine vocab ID's displayed as "{Other}"
+  subThemeVocab = Collections.synchronizedList(new ArrayList());
+  otherVocabIds = Collections.synchronizedSet (new HashSet  ());
+  for (postfix : subThemePostfixes) {
+    propertyName = "Theme " + postfix.replaceAll("_", " ");
+    fetchVocab(propertyName, subThemeVocab, "getOtherVocabIds()");
+  }
+  getOtherVocabIds() {
+    for (vocabEntry : subThemeVocab) {
+      vocabId   = vocabEntry.get(0);
+      vocabName = vocabEntry.get(1);
+      if (vocabName.equals("{Other}")) {
+        otherVocabIds.add(vocabId);
+      }
+    }
+  }
+
+  otherWasSelected = new HashMap();
+  initialiseSelected() {
+    initialiseSelected(null);
+  }
+  initialiseSelected(attributes) {
+    for (postfix : subThemePostfixes) {
+      otherWasSelected.put(postfix, false);
+    }
+
+    if (attributes == null)
+      return;
+    for (postfix : subThemePostfixes) {
+      for (a : attributes) {
+        propertyName = "Theme " + postfix.replaceAll("_", " ");
+        vocabId      = a.getValue("vocab");
+        if (!a.getName().equals(propertyName)) continue;
+
+        if (otherVocabIds.contains(vocabId)) {
+          otherWasSelected.put(postfix, true);
+          break;
+        }
+      }
+    }
+  }
+
+  // Overrides autogen definition
+  newScanRecord(){
+    String tabgroup = "Scan_Record";
+
+    String autoNumSource = "";
+    autoNumSource = getFieldValue("Control/Control/Next_ID");
+    if (isNull(autoNumSource)) {
+      showWarning("{Alert}","{A_next_ID_has_not_been_entered_please_provide_one}");
+      return;
+    }
+
+    setUuid(tabgroup, null);
+    newTabGroup(tabgroup);
+    populateAuthorAndTimestamp(tabgroup);
+    String autoNumDest = "";
+    autoNumDest = "Scan_Record/Tab/ID";
+    incAutoNum(autoNumDest);
+
+    initialisePeriods();
+    initialiseSelected();
+  }
+
+  // Overrides autogen definition
+  loadScanRecordFrom(String uuid) {
+    String tabgroup = "Scan_Record";
+    setUuid(tabgroup, uuid);
+    if (isNull(uuid)) return;
+
+    cb = new FetchCallback() {
+      onFetch(result) {
+        entity = result;
+        attributes = entity.getAttributes();
+        initialiseSelected(attributes);
+      }
+    };
+    showTabGroup(tabgroup, uuid, cb);
+  }
+
+  // Returns true IFF `As` contains any of the elements in `Bs`.
+  containsAnyOf(As, Bs) {
+    for (b : Bs)
+      if (containsString(As, b))
+        return true;
+    return false;
+  }
+
+  // Returns true IFF the list of NameValuePair objects in `As` has an element
+  // whose getName method returns a string equal to `s`.
+  containsString(As, s) {
+    for (a : As) {
+      if (a.getName().equals(s))
+        return true;
+    }
+    return false;
+  }
+
+  requestMoreInput(subThemePostfix) {
+    ref = "Scan_Record/Tab/Theme_" + subThemePostfix;
+    val = getFieldValue(ref);
+
+    if (containsAnyOf(val, otherVocabIds)) {
+      if (!otherWasSelected.get(subThemePostfix)) {
+        otherWasSelected.put(subThemePostfix, true);
+
+        head  = "Additional Input Required...";
+        body  = "You selected 'Other'. Please provide an annotation on the ";
+        body += "box you checked to specify a sub-theme.";
+
+        showWarning(head, body);
+      }
+    } else {
+      otherWasSelected.put(subThemePostfix, false);
+    }
+  }
+
+  for (postfix : subThemePostfixes) {
+    ref = "Scan_Record/Tab/Theme_" + postfix;
+
+    String cb = "";
+    cb = "requestMoreInput(\"%s\")";
+    cb = cb.replaceFirst("%s", postfix);
+
+    addOnEvent(ref, "click", cb);
+  }
+
+/***************************** NAVIGATION DRAWER ******************************/
+addNavigationButtons(String tabgroup) {
+  removeNavigationButtons();
+  List tabgroupsToValidate = new ArrayList();
+  tabgroupsToValidate.add("Scan_Record");
+
+  addNavigationButton("delete", new ActionButtonCallback() {
+    actionOnLabel() {
+      "{Delete}";
+    }
+    actionOn() {
+      deleteRecord(tabgroup);
+    }
+  }, "danger");
+  if (tabgroupsToValidate.contains(tabgroup)) {
+    addNavigationButton("validate", new ActionButtonCallback() {
+      actionOnLabel() {
+        "{Validate}";
+      }
+      actionOn() {
+        String validationFunction = "validate" + tabgroup.replaceAll("_", "") + "()";
+        eval(validationFunction);
+      }
+    }, "default");
+  }
+}
+
+]]></logic>
+</module>

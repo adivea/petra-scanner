@@ -1,0 +1,424 @@
+<?xml version='1.0' encoding='utf-8'?>
+<dataSchema>
+  <ArchaeologicalElement name="Scan Record">
+    <description></description>
+    <property name="ID" type="measure" isIdentifier="true">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="File Type" type="vocab">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+      <lookup>
+        <term>{Journal_Article}
+<description></description></term>
+        <term>{Book}
+<description></description></term>
+        <term>{Book_Section}
+<description></description></term>
+        <term>{Conference_Proceedings}
+<description></description></term>
+        <term>{Document}
+<description></description></term>
+        <term>{Image}
+<description></description></term>
+        <term>{Oral}
+<description></description></term>
+        <term>{Thesis}
+<description></description></term>
+        <term>{Video}
+<description></description></term>
+        <term>{Map}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Language" type="vocab">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+      <lookup>
+        <term>{English}
+<description></description></term>
+        <term>{Czech}
+<description></description></term>
+        <term>{French}
+<description></description></term>
+        <term>{German}
+<description></description></term>
+        <term>{Greek}
+<description></description></term>
+        <term>{Bulgarian}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Origin" type="vocab">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+      <lookup>
+        <term>{Macquarie_Library}
+<description></description></term>
+        <term>{USyd_Library}
+<description></description></term>
+        <term>{BSA_Library}
+<description></description></term>
+        <term>{ASCSA_Library}
+<description></description></term>
+        <term>{FU_Berlin_Library}
+<description></description></term>
+        <term>{Charles_Uni_Library}
+<description></description></term>
+        <term>{Bulgaria_Library}
+<description></description></term>
+        <term>{Library_Other}
+<description></description></term>
+        <term>{Museum}
+<description></description></term>
+        <term>{ILL}
+<description></description></term>
+        <term>{Internet}
+<description></description></term>
+        <term>{Academia}
+<description></description></term>
+        <term>{Research_Gate}
+<description></description></term>
+        <term>{Libgen}
+<description></description></term>
+        <term>{My_Own}
+<description></description></term>
+        <term>{Other_Researcher}
+<description></description></term>
+        <term>{Random_Source}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Research" type="vocab">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+      <lookup>
+        <term>{Dissertation}
+<description></description></term>
+        <term>{Stroyno}
+<description></description></term>
+        <term>{TRAP}
+<description></description></term>
+        <term>{FAIMS}
+<description></description></term>
+        <term>{Teaching}
+<description></description></term>
+        <term>{Postdoc_Research}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="PDF Output Name" type="measure" isIdentifier="true">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Author Last name" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Author First Name" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Year" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Book Title" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Chapter" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Journal" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Volume" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Issue" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Start Page" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="End Page" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="File Reference" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Theme Epigraphy" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{Corpus}
+<description></description></term>
+        <term>{Manual}
+<description></description></term>
+        <term>{Theoretical}
+<description></description></term>
+        <term>{Case_or_regional_study}
+<description></description></term>
+        <term>{Digital_Epigraphy}
+<description></description></term>
+        <term>{Commented_Inscriptions}
+<description></description></term>
+        <term>{Conference}
+<description></description></term>
+        <term>{Work_in_Progress}
+<description></description></term>
+        <term>{Paper_Poster}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme Thrace" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{Archaeology}
+<description></description></term>
+        <term>{Epigraphy}
+<description></description></term>
+        <term>{Numismatics}
+<description></description></term>
+        <term>{Conference}
+<description></description></term>
+        <term>{History}
+<description></description></term>
+        <term>{Geography}
+<description></description></term>
+        <term>{Society}
+<description></description></term>
+        <term>{Religion}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme Archaeology" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{General}
+<description></description></term>
+        <term>{Funerary}
+<description></description></term>
+        <term>{Settlement}
+<description></description></term>
+        <term>{Pottery}
+<description></description></term>
+        <term>{Numismatics}
+<description></description></term>
+        <term>{Historiography_and_theory}
+<description></description></term>
+        <term>{Site_Reports}
+<description></description></term>
+        <term>{Regional_Study}
+<description></description></term>
+        <term>{Environmental}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme Anthropology" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{Social_Complexity}
+<description></description></term>
+        <term>{Culture_Contact}
+<description></description></term>
+        <term>{Hellenization}
+<description></description></term>
+        <term>{Romanization}
+<description></description></term>
+        <term>{Theoretical}
+<description></description></term>
+        <term>{Case_Study}
+<description></description></term>
+        <term>{Excavation_Site_Report}
+<description></description></term>
+        <term>{Linguistics}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme History" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{Greek}
+<description></description></term>
+        <term>{Roman}
+<description></description></term>
+        <term>{Thrace}
+<description></description></term>
+        <term>{Theory}
+<description></description></term>
+        <term>{General}
+<description></description></term>
+        <term>{Modern_History}
+<description></description></term>
+        <term>{Literary_Source}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme Geography" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{Greece}
+<description></description></term>
+        <term>{Thrace}
+<description></description></term>
+        <term>{Roman_Empire}
+<description></description></term>
+        <term>{Eastern_Mediterranean}
+<description></description></term>
+        <term>{Western_Mediterranean}
+<description></description></term>
+        <term>{Near_East}
+<description></description></term>
+        <term>{Americas}
+<description></description></term>
+        <term>{Asia}
+<description></description></term>
+        <term>{Australia}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme Research Topics" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{Literacy}
+<description></description></term>
+        <term>{Social_Complexity}
+<description></description></term>
+        <term>{Digital_Humanities}
+<description></description></term>
+        <term>{Culture_Change}
+<description></description></term>
+        <term>{Milestones}
+<description></description></term>
+        <term>{Use_of_writing}
+<description></description></term>
+        <term>{Social_Status}
+<description></description></term>
+        <term>{Data_Management}
+<description></description></term>
+        <term>{Digital_Epigraphy}
+<description></description></term>
+        <term>{GIS}
+<description></description></term>
+        <term>{Spatio_temporal_Analysis}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme Media" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{Electronic___Local}
+<description></description></term>
+        <term>{Electronic___Australian}
+<description></description></term>
+        <term>{Electronic___Other}
+<description></description></term>
+        <term>{Historiography_and_theory}
+<description></description></term>
+        <term>{Print___Local}
+<description></description></term>
+        <term>{Print___Australian}
+<description></description></term>
+        <term>{Print___Other}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Theme Other" type="vocab">
+      <description></description>
+      <formatString>$1</formatString>
+      <appendCharacterString>, </appendCharacterString>
+      <lookup>
+        <term>{TRAP}
+<description></description></term>
+        <term>{FAIMS}
+<description></description></term>
+        <term>{Teaching}
+<description></description></term>
+        <term>{Interesting_Stuff}
+<description></description></term>
+        <term>{Personal}
+<description></description></term>
+        <term>{Future_Research}
+<description></description></term>
+        <term>{Other}
+<description></description></term>
+      </lookup>
+    </property>
+    <property name="Notes" type="measure">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+    <property name="Files" type="file" file="true" thumbnail="true">
+      <description></description>
+      <formatString>{{if $1 then $1}}{{if and($1, $2) then " " }}{{if $2 then $2}}{{if $3 then " ($3)"}}{{if between($4,0,0.49) then "??" elsif lessThan($4,1) then "?" }}</formatString>
+      <appendCharacterString> - </appendCharacterString>
+    </property>
+  </ArchaeologicalElement>
+</dataSchema>

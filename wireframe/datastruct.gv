@@ -1,0 +1,395 @@
+digraph {
+	graph [
+		rankdir="LR"
+		fontname="Roboto"
+		splines=ortho
+		outputorder="nodesfirst"
+		ranksep=2
+	];
+	node [
+		fontsize="12"
+		shape=plaintext
+		fontname="Roboto"
+		margin=0
+		shape=none
+	];
+
+	subgraph cluster_b512d97e7c {
+		label="User"
+		bgcolor="lightblue"
+
+		cluster_anchor_b512d97e7c [label="" fixedsize=shape width=0 height=0]
+
+		subgraph cluster_ab74b86763 {
+			label=""
+			bgcolor="white"
+
+			struct_Label_ab74b86763 [
+			label=<
+				<TABLE BORDER="1" CELLBORDER="3" CELLSPACING="0" CELLPADDING="5" WIDTH="150" HEIGHT="10">
+					<TR>
+						<TD SIDES="b" ALIGN="TEXT">User</TD>
+					</TR>
+				</TABLE>
+			>];
+
+			struct_Elems_ac9c6a80d3 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_ac9c6a80d3"><IMG SRC="User_User_Users.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+		}
+
+	}
+
+	subgraph cluster_32d7e82082 {
+		label="Control"
+		bgcolor="lightblue"
+
+		cluster_anchor_32d7e82082 [label="" fixedsize=shape width=0 height=0]
+
+		subgraph cluster_3484e0557d {
+			label=""
+			bgcolor="white"
+
+			struct_Label_3484e0557d [
+			label=<
+				<TABLE BORDER="1" CELLBORDER="3" CELLSPACING="0" CELLPADDING="5" WIDTH="150" HEIGHT="10">
+					<TR>
+						<TD SIDES="b" ALIGN="TEXT">Control</TD>
+						<TD SIDES="b" BORDER="1">...</TD>
+					</TR>
+				</TABLE>
+			>];
+
+			struct_Elems_83481b07d6 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_83481b07d6"><IMG SRC="Control_Control_Next_ID.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_46c00a2c7c [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_46c00a2c7c"><IMG SRC="Control_Control_Create_New_Record.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+		}
+
+		subgraph cluster_b5348d5536 {
+			label=""
+			bgcolor="white"
+
+			struct_Label_b5348d5536 [
+			label=<
+				<TABLE BORDER="1" CELLBORDER="3" CELLSPACING="0" CELLPADDING="5" WIDTH="150" HEIGHT="10">
+					<TR>
+						<TD SIDES="b" BORDER="1">...</TD>
+						<TD SIDES="b" ALIGN="TEXT">Search</TD>
+					</TR>
+				</TABLE>
+			>];
+
+			struct_Elems_b430ed08aa [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR>
+						<TD PORT="_694e4e9057"><IMG SRC="Control_Search_Search_Term.svg"></IMG></TD>
+						<TD PORT="_00a6aefbda"><IMG SRC="Control_Search_Search_Button.svg"></IMG></TD>
+					</TR>
+				</TABLE>
+			>];
+
+			struct_Elems_89e10496a5 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_89e10496a5"><IMG SRC="Control_Search_Entity_List.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+		}
+
+	}
+
+	subgraph cluster_f5e3555520 {
+		label="Scan Record"
+		bgcolor="lightblue"
+
+		cluster_anchor_f5e3555520 [label="" fixedsize=shape width=0 height=0]
+
+		subgraph cluster_1d06854d73 {
+			label=""
+			bgcolor="white"
+
+			struct_Label_1d06854d73 [
+			label=<
+				<TABLE BORDER="1" CELLBORDER="3" CELLSPACING="0" CELLPADDING="5" WIDTH="150" HEIGHT="10">
+					<TR>
+						<TD SIDES="b" ALIGN="TEXT">Metadata</TD>
+						<TD SIDES="b" BORDER="1">...</TD>
+					</TR>
+				</TABLE>
+			>];
+
+			struct_Elems_a58af6831d [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_a58af6831d"><IMG SRC="Scan_Record_Tab_ID.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_57ca3a2451 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_57ca3a2451"><IMG SRC="Scan_Record_Tab_Attach_New_Files.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_3eb189ba30 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_3eb189ba30"><IMG SRC="Scan_Record_Tab_File_Type.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_37ea2baf2b [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_37ea2baf2b"><IMG SRC="Scan_Record_Tab_Language.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_c9639708d9 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_c9639708d9"><IMG SRC="Scan_Record_Tab_Origin.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_86c8fa471e [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_86c8fa471e"><IMG SRC="Scan_Record_Tab_Research.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_5311072f43 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_5311072f43"><IMG SRC="Scan_Record_Tab_PDF_Output_Name.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_f7e96e53c0 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_f7e96e53c0"><IMG SRC="Scan_Record_Tab_Author_Last_name.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_12826bc8f7 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_12826bc8f7"><IMG SRC="Scan_Record_Tab_Author_First_Name.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_0288d326ef [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_0288d326ef"><IMG SRC="Scan_Record_Tab_Year.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_688d33d2f3 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_688d33d2f3"><IMG SRC="Scan_Record_Tab_Book_Title.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_1ba6233d3f [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_1ba6233d3f"><IMG SRC="Scan_Record_Tab_Chapter.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_6bf1738f9f [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_6bf1738f9f"><IMG SRC="Scan_Record_Tab_Journal.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_12d12d0710 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_12d12d0710"><IMG SRC="Scan_Record_Tab_Volume.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_3dea815d23 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_3dea815d23"><IMG SRC="Scan_Record_Tab_Issue.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_8ffa1c5a5f [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_8ffa1c5a5f"><IMG SRC="Scan_Record_Tab_Start_Page.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_9c92ba4a83 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_9c92ba4a83"><IMG SRC="Scan_Record_Tab_End_Page.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_6a36fc45ce [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_6a36fc45ce"><IMG SRC="Scan_Record_Tab_File_Reference.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_9942dd9526 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_9942dd9526"><IMG SRC="Scan_Record_Tab_Theme_Epigraphy.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_8c3c8f7c6d [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_8c3c8f7c6d"><IMG SRC="Scan_Record_Tab_Theme_Thrace.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_26d128bc2f [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_26d128bc2f"><IMG SRC="Scan_Record_Tab_Theme_Archaeology.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_80d953e9ec [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_80d953e9ec"><IMG SRC="Scan_Record_Tab_Theme_Anthropology.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_13f23d9f53 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_13f23d9f53"><IMG SRC="Scan_Record_Tab_Theme_History.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_fa4346f405 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_fa4346f405"><IMG SRC="Scan_Record_Tab_Theme_Geography.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_18f6e8f10e [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_18f6e8f10e"><IMG SRC="Scan_Record_Tab_Theme_Research_Topics.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_3ae3d58675 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_3ae3d58675"><IMG SRC="Scan_Record_Tab_Theme_Media.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_6bd77e309a [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_6bd77e309a"><IMG SRC="Scan_Record_Tab_Theme_Other.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+		}
+
+		subgraph cluster_d25bf375d4 {
+			label=""
+			bgcolor="white"
+
+			struct_Label_d25bf375d4 [
+			label=<
+				<TABLE BORDER="1" CELLBORDER="3" CELLSPACING="0" CELLPADDING="5" WIDTH="150" HEIGHT="10">
+					<TR>
+						<TD SIDES="b" BORDER="1">...</TD>
+						<TD SIDES="b" ALIGN="TEXT">Notes</TD>
+						<TD SIDES="b" BORDER="1">...</TD>
+					</TR>
+				</TABLE>
+			>];
+
+			struct_Elems_608ab7bb28 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_608ab7bb28"><IMG SRC="Scan_Record_Notes_Notes.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+		}
+
+		subgraph cluster_14a00de7b8 {
+			label=""
+			bgcolor="white"
+
+			struct_Label_14a00de7b8 [
+			label=<
+				<TABLE BORDER="1" CELLBORDER="3" CELLSPACING="0" CELLPADDING="5" WIDTH="150" HEIGHT="10">
+					<TR>
+						<TD SIDES="b" BORDER="1">...</TD>
+						<TD SIDES="b" ALIGN="TEXT">Files</TD>
+					</TR>
+				</TABLE>
+			>];
+
+			struct_Elems_2265e510d5 [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_2265e510d5"><IMG SRC="Scan_Record_Files_Files.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+			struct_Elems_268e290bfa [
+			label=<
+				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
+					<TR><TD PORT="_268e290bfa"><IMG SRC="Scan_Record_Files_Files_Button_1.svg"/></TD></TR>
+				</TABLE>
+			>];
+
+		}
+
+	}
+
+	/* Intra-tab, label-to-label links */
+	struct_Label_3484e0557d -> struct_Label_b5348d5536
+	struct_Label_1d06854d73 -> struct_Label_d25bf375d4
+	struct_Label_d25bf375d4 -> struct_Label_14a00de7b8
+	/* Graph-constraining links */
+	cluster_anchor_b512d97e7c -> cluster_anchor_32d7e82082 [style=invis]
+	cluster_anchor_32d7e82082 -> cluster_anchor_f5e3555520 [style=invis]
+	/* User-specified links */
+	struct_Elems_ac9c6a80d3:_ac9c6a80d3 -> struct_Label_3484e0557d [constraint=false]
+	struct_Elems_46c00a2c7c:_46c00a2c7c -> struct_Label_1d06854d73 [constraint=false]
+}

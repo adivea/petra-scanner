@@ -1,0 +1,319 @@
+<?xml version='1.0' encoding='utf-8'?>
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:jr="http://openrosa.org/javarosa" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>FILL THIS IN</h:title>
+    <model>
+      <instance>
+        <faims id="FILL_THIS_IN">
+          <!--START: Style-->
+          <style>
+            <orientation>
+              <orientation/>
+            </orientation>
+            <even>
+              <layout_weight/>
+            </even>
+            <large>
+              <layout_weight/>
+            </large>
+          </style>
+          <!--END: Style-->
+          <User>
+            <User>
+              <Users/>
+            </User>
+          </User>
+          <Control>
+            <Control>
+              <Next_ID/>
+              <Create_New_Record/>
+            </Control>
+            <Search>
+              <Colgroup_0>
+                <Col_0>
+                  <Search_Term/>
+                </Col_0>
+                <Col_1>
+                  <Search_Button/>
+                </Col_1>
+              </Colgroup_0>
+              <Entity_List/>
+            </Search>
+          </Control>
+          <Scan_Record>
+            <Tab>
+              <ID/>
+              <Attach_New_Files/>
+              <File_Type/>
+              <Language/>
+              <Origin/>
+              <Research/>
+              <PDF_Output_Name/>
+              <Author_Last_name/>
+              <Author_First_Name/>
+              <Year/>
+              <Book_Title/>
+              <Chapter/>
+              <Journal/>
+              <Volume/>
+              <Issue/>
+              <Start_Page/>
+              <End_Page/>
+              <File_Reference/>
+              <Theme_Epigraphy/>
+              <Theme_Thrace/>
+              <Theme_Archaeology/>
+              <Theme_Anthropology/>
+              <Theme_History/>
+              <Theme_Geography/>
+              <Theme_Research_Topics/>
+              <Theme_Media/>
+              <Theme_Other/>
+            </Tab>
+            <Notes>
+              <Notes/>
+            </Notes>
+            <Files>
+              <Files/>
+              <Files_Button_1/>
+            </Files>
+          </Scan_Record>
+        </faims>
+      </instance>
+      <bind nodeset="/faims/Control/Control/Next_ID" type="decimal"/>
+    </model>
+  </h:head>
+  <h:body>
+    <!--START: Style-->
+    <group ref="style">
+      <label/>
+      <group ref="orientation">
+        <label/>
+        <input ref="orientation">
+          <label>horizontal</label>
+        </input>
+      </group>
+      <group ref="even">
+        <label/>
+        <input ref="layout_weight">
+          <label>1</label>
+        </input>
+      </group>
+      <group ref="large">
+        <label/>
+        <input ref="layout_weight">
+          <label>3</label>
+        </input>
+      </group>
+    </group>
+    <!--END: Style-->
+    <group ref="User">
+      <label>{User}</label>
+      <group ref="User" faims_scrollable="false">
+        <label>{User}</label>
+        <select1 appearance="compact" ref="Users">
+          <label>{Users}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
+      </group>
+    </group>
+    <group ref="Control">
+      <label>{Control}</label>
+      <group ref="Control">
+        <label>{Control}</label>
+        <input ref="Next_ID" faims_style_class="required">
+          <label>{Next_ID}</label>
+        </input>
+        <trigger ref="Create_New_Record">
+          <label>{Create_New_Record}</label>
+        </trigger>
+      </group>
+      <group ref="Search" faims_scrollable="false">
+        <label>{Search}</label>
+        <group ref="Colgroup_0" faims_style="orientation">
+          <label/>
+          <group ref="Col_0" faims_style="even">
+            <label/>
+            <input ref="Search_Term">
+              <label>{Search_Term}</label>
+            </input>
+          </group>
+          <group ref="Col_1" faims_style="large">
+            <label/>
+            <trigger ref="Search_Button">
+              <label>{Search_Button}</label>
+            </trigger>
+          </group>
+        </group>
+        <select1 appearance="compact" ref="Entity_List">
+          <label>{Entity_List}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
+      </group>
+    </group>
+    <group ref="Scan_Record" faims_archent_type="Scan Record">
+      <label>{Scan_Record}</label>
+      <group ref="Tab">
+        <label>{Metadata}</label>
+        <input faims_attribute_name="ID" faims_attribute_type="measure" ref="ID" faims_style_class="required">
+          <label>{ID}</label>
+        </input>
+        <trigger ref="Attach_New_Files">
+          <label>{Attach_New_Files}</label>
+        </trigger>
+        <select1 faims_attribute_name="File Type" faims_attribute_type="vocab" ref="File_Type">
+          <label>{File_Type}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
+        <select1 faims_attribute_name="Language" faims_attribute_type="vocab" ref="Language">
+          <label>{Language}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
+        <select1 faims_attribute_name="Origin" faims_attribute_type="vocab" ref="Origin">
+          <label>{Origin}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
+        <select1 faims_attribute_name="Research" faims_attribute_type="vocab" ref="Research">
+          <label>{Research}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select1>
+        <input faims_attribute_name="PDF Output Name" faims_attribute_type="measure" ref="PDF_Output_Name" faims_style_class="required">
+          <label>{PDF_Output_Name}</label>
+        </input>
+        <input faims_attribute_name="Author Last name" faims_attribute_type="measure" ref="Author_Last_name">
+          <label>{Author_Last_name}</label>
+        </input>
+        <input faims_attribute_name="Author First Name" faims_attribute_type="measure" ref="Author_First_Name">
+          <label>{Author_First_Name}</label>
+        </input>
+        <input faims_attribute_name="Year" faims_attribute_type="measure" ref="Year">
+          <label>{Year}</label>
+        </input>
+        <input faims_attribute_name="Book Title" faims_attribute_type="measure" ref="Book_Title">
+          <label>{Book_Title}</label>
+        </input>
+        <input faims_attribute_name="Chapter" faims_attribute_type="measure" ref="Chapter">
+          <label>{Chapter}</label>
+        </input>
+        <input faims_attribute_name="Journal" faims_attribute_type="measure" ref="Journal">
+          <label>{Journal}</label>
+        </input>
+        <input faims_attribute_name="Volume" faims_attribute_type="measure" ref="Volume">
+          <label>{Volume}</label>
+        </input>
+        <input faims_attribute_name="Issue" faims_attribute_type="measure" ref="Issue">
+          <label>{Issue}</label>
+        </input>
+        <input faims_attribute_name="Start Page" faims_attribute_type="measure" ref="Start_Page">
+          <label>{Start_Page}</label>
+        </input>
+        <input faims_attribute_name="End Page" faims_attribute_type="measure" ref="End_Page">
+          <label>{End_Page}</label>
+        </input>
+        <input faims_attribute_name="File Reference" faims_attribute_type="measure" ref="File_Reference">
+          <label>{File_Reference}</label>
+        </input>
+        <select faims_attribute_name="Theme Epigraphy" faims_attribute_type="vocab" ref="Theme_Epigraphy">
+          <label>{Theme__Epigraphy}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme Thrace" faims_attribute_type="vocab" ref="Theme_Thrace">
+          <label>{Theme__Thrace}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme Archaeology" faims_attribute_type="vocab" ref="Theme_Archaeology">
+          <label>{Theme__Archaeology}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme Anthropology" faims_attribute_type="vocab" ref="Theme_Anthropology">
+          <label>{Theme__Anthropology}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme History" faims_attribute_type="vocab" ref="Theme_History">
+          <label>{Theme__History}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme Geography" faims_attribute_type="vocab" ref="Theme_Geography">
+          <label>{Theme__Geography}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme Research Topics" faims_attribute_type="vocab" ref="Theme_Research_Topics">
+          <label>{Theme__Research_Topics}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme Media" faims_attribute_type="vocab" ref="Theme_Media">
+          <label>{Theme__Media}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <select faims_attribute_name="Theme Other" faims_attribute_type="vocab" ref="Theme_Other">
+          <label>{Theme__Other}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+      </group>
+      <group ref="Notes">
+        <label>{Notes}</label>
+        <input faims_attribute_name="Notes" faims_attribute_type="measure" ref="Notes">
+          <label>{Notes}</label>
+        </input>
+      </group>
+      <group ref="Files">
+        <label>{Files}</label>
+        <select faims_sync="true" type="file" faims_attribute_name="Files" faims_attribute_type="measure" ref="Files">
+          <label>{Files}</label>
+          <item>
+            <label>Options not loaded</label>
+            <value>Options not loaded</value>
+          </item>
+        </select>
+        <trigger ref="Files_Button_1">
+          <label>{Files}</label>
+        </trigger>
+      </group>
+    </group>
+  </h:body>
+</h:html>
