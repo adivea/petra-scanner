@@ -429,9 +429,6 @@
     String autoNumDest = "";
     autoNumDest = "Scan_Record/Tab/ID";
     incAutoNum(autoNumDest);
-
-    initialisePeriods();
-    initialiseSelected();
   }
 
   // Overrides autogen definition
