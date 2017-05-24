@@ -87,12 +87,13 @@
     <Book_Title/>
     <Chapter/>
     <Journal/>
-    <Volume/>
-    <Issue/>
-    <Start_Page/>
-    <End_Page/>
+    <Volume b="decimal"/>
+    <Issue b="decimal"/>
+    <Start_Page b="decimal"/>
+    <End_Page b="decimal"/>
     <File_Reference/>
-    <!--<Theme>-->
+ 
+     <!--<Theme>-->
       <!--<opts>-->
         <!--<opt>Epigraphy</opt>-->
         <!--<opt>Thrace</opt>-->
@@ -101,7 +102,7 @@
         <!--<opt>History</opt>-->
         <!--<opt>Geography</opt>-->
         <!--<opt>Research Topics/opt>-->
-        <!--<opt>Media</opt>-->
+        <!--<opt>Date</opt>-->
         <!--<opt>Other</opt>-->
       <!--</opts>-->
     <!--</Theme>-->
@@ -244,23 +245,24 @@
       </opts>
     </Theme_Research_Topics>
 
-    <Theme_Media t="checkbox">
-      Theme: Media
+    <Theme_Date t="checkbox">
+      Theme: Date
       <str>
         <fmt>$1</fmt>
         <app>, </app>
       </str>
       <opts>
-        <opt>Electronic — Local</opt>
-        <opt>Electronic — Australian</opt>
-        <opt>Electronic — Other</opt>
-        <opt>Historiography and theory</opt>
-        <opt>Print — Local</opt>
-        <opt>Print — Australian</opt>
-        <opt>Print — Other</opt>
+        <opt>Prehistory</opt>
+        <opt>Archaic</opt>
+        <opt>Classical</opt>
+        <opt>Hellenistic</opt>
+        <opt>Roman</opt>
+        <opt>Medieaval</opt>
+        <opt>Modern</opt>
+        <opt>Long Duree</opt>
         <opt>Other</opt>
       </opts>
-    </Theme_Media>
+    </Theme_Date>
 
     <Theme_Other t="checkbox">
       Theme: Other
@@ -367,7 +369,7 @@
   subThemePostfixes.add("History");
   subThemePostfixes.add("Geography");
   subThemePostfixes.add("Research_Topics");
-  subThemePostfixes.add("Media");
+  subThemePostfixes.add("Date");
   subThemePostfixes.add("Other");
 
   // Determine vocab ID's displayed as "{Other}"

@@ -366,24 +366,26 @@
 <description></description></term>
       </lookup>
     </property>
-    <property name="Theme Media" type="vocab">
+    <property name="Theme Date" type="vocab">
       <description></description>
       <formatString>$1</formatString>
       <appendCharacterString>, </appendCharacterString>
       <lookup>
-        <term>{Electronic___Local}
+        <term>{Prehistory}
 <description></description></term>
-        <term>{Electronic___Australian}
+        <term>{Archaic}
 <description></description></term>
-        <term>{Electronic___Other}
+        <term>{Classical}
 <description></description></term>
-        <term>{Historiography_and_theory}
+        <term>{Hellenistic}
 <description></description></term>
-        <term>{Print___Local}
+        <term>{Roman}
 <description></description></term>
-        <term>{Print___Australian}
+        <term>{Medieaval}
 <description></description></term>
-        <term>{Print___Other}
+        <term>{Modern}
+<description></description></term>
+        <term>{Long_Duree}
 <description></description></term>
         <term>{Other}
 <description></description></term>

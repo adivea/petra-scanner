@@ -126,7 +126,7 @@ REF_TO_TYPE.put("Scan_Record/Tab/Theme_Anthropology", "checkbox");
 REF_TO_TYPE.put("Scan_Record/Tab/Theme_History", "checkbox");
 REF_TO_TYPE.put("Scan_Record/Tab/Theme_Geography", "checkbox");
 REF_TO_TYPE.put("Scan_Record/Tab/Theme_Research_Topics", "checkbox");
-REF_TO_TYPE.put("Scan_Record/Tab/Theme_Media", "checkbox");
+REF_TO_TYPE.put("Scan_Record/Tab/Theme_Date", "checkbox");
 REF_TO_TYPE.put("Scan_Record/Tab/Theme_Other", "checkbox");
 REF_TO_TYPE.put("Scan_Record/Notes/Notes", "input");
 REF_TO_TYPE.put("Scan_Record/Files/Files", "file");
@@ -156,7 +156,7 @@ DATA_REFS.add("Scan_Record/Tab/Theme_Anthropology");
 DATA_REFS.add("Scan_Record/Tab/Theme_History");
 DATA_REFS.add("Scan_Record/Tab/Theme_Geography");
 DATA_REFS.add("Scan_Record/Tab/Theme_Research_Topics");
-DATA_REFS.add("Scan_Record/Tab/Theme_Media");
+DATA_REFS.add("Scan_Record/Tab/Theme_Date");
 DATA_REFS.add("Scan_Record/Tab/Theme_Other");
 DATA_REFS.add("Scan_Record/Notes/Notes");
 DATA_REFS.add("Scan_Record/Files/Files");
@@ -1196,7 +1196,7 @@ makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Anthropology", "Theme Anthropo
 makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_History", "Theme History");
 makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Geography", "Theme Geography");
 makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Research_Topics", "Theme Research Topics");
-makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Media", "Theme Media");
+makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Date", "Theme Date");
 makeVocab("CheckBoxGroup", "Scan_Record/Tab/Theme_Other", "Theme Other");
 
 
@@ -2332,7 +2332,7 @@ for (m : ENTITY_MENUS) {
   subThemePostfixes.add("History");
   subThemePostfixes.add("Geography");
   subThemePostfixes.add("Research_Topics");
-  subThemePostfixes.add("Media");
+  subThemePostfixes.add("Date");
   subThemePostfixes.add("Other");
 
   // Determine vocab ID's displayed as "{Other}"

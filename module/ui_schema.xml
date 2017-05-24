@@ -67,7 +67,7 @@
               <Theme_History/>
               <Theme_Geography/>
               <Theme_Research_Topics/>
-              <Theme_Media/>
+              <Theme_Date/>
               <Theme_Other/>
             </Tab>
             <Notes>
@@ -81,6 +81,10 @@
         </faims>
       </instance>
       <bind nodeset="/faims/Control/Control/Next_ID" type="decimal"/>
+      <bind nodeset="/faims/Scan_Record/Tab/Volume" type="decimal"/>
+      <bind nodeset="/faims/Scan_Record/Tab/Issue" type="decimal"/>
+      <bind nodeset="/faims/Scan_Record/Tab/Start_Page" type="decimal"/>
+      <bind nodeset="/faims/Scan_Record/Tab/End_Page" type="decimal"/>
     </model>
   </h:head>
   <h:body>
@@ -280,8 +284,8 @@
             <value>Options not loaded</value>
           </item>
         </select>
-        <select faims_attribute_name="Theme Media" faims_attribute_type="vocab" ref="Theme_Media">
-          <label>{Theme__Media}</label>
+        <select faims_attribute_name="Theme Date" faims_attribute_type="vocab" ref="Theme_Date">
+          <label>{Theme__Date}</label>
           <item>
             <label>Options not loaded</label>
             <value>Options not loaded</value>

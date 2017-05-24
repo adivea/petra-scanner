@@ -9,6 +9,7 @@
 <arch16n k="{Americas}"><![CDATA[Americas]]></arch16n>
 <arch16n k="{Any_unsaved_changes_will_be_lost}"><![CDATA[Any unsaved changes will be lost]]></arch16n>
 <arch16n k="{Archaeology}"><![CDATA[Archaeology]]></arch16n>
+<arch16n k="{Archaic}"><![CDATA[Archaic]]></arch16n>
 <arch16n k="{Asia}"><![CDATA[Asia]]></arch16n>
 <arch16n k="{Attach_New_Files}"><![CDATA[Attach New Files]]></arch16n>
 <arch16n k="{Australia}"><![CDATA[Australia]]></arch16n>
@@ -24,6 +25,7 @@
 <arch16n k="{Case_or_regional_study}"><![CDATA[Case or regional study]]></arch16n>
 <arch16n k="{Chapter}"><![CDATA[Chapter]]></arch16n>
 <arch16n k="{Charles_Uni_Library}"><![CDATA[Charles Uni Library]]></arch16n>
+<arch16n k="{Classical}"><![CDATA[Classical]]></arch16n>
 <arch16n k="{Clean_Synced_Files}"><![CDATA[Clean synced files]]></arch16n>
 <arch16n k="{Commented_Inscriptions}"><![CDATA[Commented Inscriptions]]></arch16n>
 <arch16n k="{Conference}"><![CDATA[Conference]]></arch16n>
@@ -49,9 +51,6 @@
 <arch16n k="{Duplicated_record}"><![CDATA[Duplicated record]]></arch16n>
 <arch16n k="{Eastern_Mediterranean}"><![CDATA[Eastern Mediterranean]]></arch16n>
 <arch16n k="{Easting}"><![CDATA[Easting]]></arch16n>
-<arch16n k="{Electronic___Australian}"><![CDATA[Electronic — Australian]]></arch16n>
-<arch16n k="{Electronic___Local}"><![CDATA[Electronic — Local]]></arch16n>
-<arch16n k="{Electronic___Other}"><![CDATA[Electronic — Other]]></arch16n>
 <arch16n k="{Enable_External_GPS}"><![CDATA[Enable External GPS]]></arch16n>
 <arch16n k="{Enable_Internal_GPS}"><![CDATA[Enable Internal GPS]]></arch16n>
 <arch16n k="{Enable_Sync}"><![CDATA[Enable Sync]]></arch16n>
@@ -81,6 +80,7 @@
 <arch16n k="{German}"><![CDATA[German]]></arch16n>
 <arch16n k="{Greece}"><![CDATA[Greece]]></arch16n>
 <arch16n k="{Greek}"><![CDATA[Greek]]></arch16n>
+<arch16n k="{Hellenistic}"><![CDATA[Hellenistic]]></arch16n>
 <arch16n k="{Hellenization}"><![CDATA[Hellenization]]></arch16n>
 <arch16n k="{Historiography_and_theory}"><![CDATA[Historiography and theory]]></arch16n>
 <arch16n k="{History}"><![CDATA[History]]></arch16n>
@@ -102,12 +102,15 @@
 <arch16n k="{Linguistics}"><![CDATA[Linguistics]]></arch16n>
 <arch16n k="{Literacy}"><![CDATA[Literacy]]></arch16n>
 <arch16n k="{Literary_Source}"><![CDATA[Literary Source]]></arch16n>
+<arch16n k="{Long_Duree}"><![CDATA[Long Duree]]></arch16n>
 <arch16n k="{Longitude}"><![CDATA[Longitude]]></arch16n>
 <arch16n k="{Macquarie_Library}"><![CDATA[Macquarie Library]]></arch16n>
 <arch16n k="{Manual}"><![CDATA[Manual]]></arch16n>
 <arch16n k="{Map}"><![CDATA[Map]]></arch16n>
+<arch16n k="{Medieaval}"><![CDATA[Medieaval]]></arch16n>
 <arch16n k="{Metadata}"><![CDATA[Metadata]]></arch16n>
 <arch16n k="{Milestones}"><![CDATA[Milestones]]></arch16n>
+<arch16n k="{Modern}"><![CDATA[Modern]]></arch16n>
 <arch16n k="{Modern_History}"><![CDATA[Modern History]]></arch16n>
 <arch16n k="{Museum}"><![CDATA[Museum]]></arch16n>
 <arch16n k="{My_Own}"><![CDATA[My Own]]></arch16n>
@@ -130,11 +133,9 @@
 <arch16n k="{Position}"><![CDATA[Position]]></arch16n>
 <arch16n k="{Postdoc_Research}"><![CDATA[Postdoc Research]]></arch16n>
 <arch16n k="{Pottery}"><![CDATA[Pottery]]></arch16n>
+<arch16n k="{Prehistory}"><![CDATA[Prehistory]]></arch16n>
 <arch16n k="{Press_OK_to_Delete_this_Record}"><![CDATA[Press OK to delete this record]]></arch16n>
 <arch16n k="{Previous_status}"><![CDATA[Previous status]]></arch16n>
-<arch16n k="{Print___Australian}"><![CDATA[Print — Australian]]></arch16n>
-<arch16n k="{Print___Local}"><![CDATA[Print — Local]]></arch16n>
-<arch16n k="{Print___Other}"><![CDATA[Print — Other]]></arch16n>
 <arch16n k="{Random_Source}"><![CDATA[Random Source]]></arch16n>
 <arch16n k="{Regional_Study}"><![CDATA[Regional Study]]></arch16n>
 <arch16n k="{Religion}"><![CDATA[Religion]]></arch16n>
@@ -163,10 +164,10 @@
 <arch16n k="{The_current_record_has_not_been_saved_yet}"><![CDATA[The current record has not been saved yet. Press 'OK' to create a new record without waiting for any new data to be saved.]]></arch16n>
 <arch16n k="{Theme__Anthropology}"><![CDATA[Theme: Anthropology]]></arch16n>
 <arch16n k="{Theme__Archaeology}"><![CDATA[Theme: Archaeology]]></arch16n>
+<arch16n k="{Theme__Date}"><![CDATA[Theme: Date]]></arch16n>
 <arch16n k="{Theme__Epigraphy}"><![CDATA[Theme: Epigraphy]]></arch16n>
 <arch16n k="{Theme__Geography}"><![CDATA[Theme: Geography]]></arch16n>
 <arch16n k="{Theme__History}"><![CDATA[Theme: History]]></arch16n>
-<arch16n k="{Theme__Media}"><![CDATA[Theme: Media]]></arch16n>
 <arch16n k="{Theme__Other}"><![CDATA[Theme: Other]]></arch16n>
 <arch16n k="{Theme__Research_Topics}"><![CDATA[Theme: Research Topics]]></arch16n>
 <arch16n k="{Theme__Thrace}"><![CDATA[Theme: Thrace]]></arch16n>

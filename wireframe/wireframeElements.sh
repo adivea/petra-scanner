@@ -34,7 +34,7 @@
 ./makeElement.sh Scan_Record_Tab_Theme_History "Theme: History" checkbox 1 false false true false false .
 ./makeElement.sh Scan_Record_Tab_Theme_Geography "Theme: Geography" checkbox 1 false false true false false .
 ./makeElement.sh Scan_Record_Tab_Theme_Research_Topics "Theme: Research Topics" checkbox 1 false false true false false .
-./makeElement.sh Scan_Record_Tab_Theme_Media "Theme: Media" checkbox 1 false false true false false .
+./makeElement.sh Scan_Record_Tab_Theme_Date "Theme: Date" checkbox 1 false false true false false .
 ./makeElement.sh Scan_Record_Tab_Theme_Other "Theme: Other" checkbox 1 false false true false false .
 ./makeElement.sh Scan_Record_Notes_Notes "Notes" input 1 false false true false false .
 ./makeElement.sh Scan_Record_Files_Files "Files" file 1 false false true false false .

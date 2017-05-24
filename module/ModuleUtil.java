@@ -141,6 +141,15 @@ public class ModuleUtil extends ModuleHelper {
 
     /*
         Type: checkbox
+        Ref:  Scan_Record/Tab/Theme_Date
+     */
+    public static View get_ScanRecord_Tab_ThemeDate(Solo solo) {
+        String ref = "Scan_Record/Tab/Theme_Date";
+        return (android.view.View) solo.getView((Object) ref);
+    }
+
+    /*
+        Type: checkbox
         Ref:  Scan_Record/Tab/Theme_Epigraphy
      */
     public static View get_ScanRecord_Tab_ThemeEpigraphy(Solo solo) {
@@ -163,15 +172,6 @@ public class ModuleUtil extends ModuleHelper {
      */
     public static View get_ScanRecord_Tab_ThemeHistory(Solo solo) {
         String ref = "Scan_Record/Tab/Theme_History";
-        return (android.view.View) solo.getView((Object) ref);
-    }
-
-    /*
-        Type: checkbox
-        Ref:  Scan_Record/Tab/Theme_Media
-     */
-    public static View get_ScanRecord_Tab_ThemeMedia(Solo solo) {
-        String ref = "Scan_Record/Tab/Theme_Media";
         return (android.view.View) solo.getView((Object) ref);
     }
 
