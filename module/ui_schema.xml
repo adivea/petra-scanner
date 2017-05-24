@@ -60,6 +60,8 @@
               <Start_Page/>
               <End_Page/>
               <File_Reference/>
+            </Tab>
+            <Tab>
               <Theme_Epigraphy/>
               <Theme_Thrace/>
               <Theme_Archaeology/>
@@ -235,6 +237,9 @@
         <input faims_attribute_name="File Reference" faims_attribute_type="measure" ref="File_Reference">
           <label>{File_Reference}</label>
         </input>
+      </group>
+      <group ref="Tab">
+        <label>{Keywords}</label>
         <select faims_attribute_name="Theme Epigraphy" faims_attribute_type="vocab" ref="Theme_Epigraphy">
           <label>{Theme__Epigraphy}</label>
           <item>

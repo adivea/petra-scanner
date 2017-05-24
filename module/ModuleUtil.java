@@ -79,6 +79,15 @@ public class ModuleUtil extends ModuleHelper {
 
     /*
         Type: tab
+        Ref:  Scan_Record/Tab
+     */
+    public static View get_ScanRecord_Tab(Solo solo) {
+        String ref = "Scan_Record/Tab";
+        return (android.view.View) solo.getView((Object) ref);
+    }
+
+    /*
+        Type: tab
         Ref:  User/User
      */
     public static View get_User_User(Solo solo) {
