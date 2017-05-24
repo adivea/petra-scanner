@@ -81,6 +81,7 @@
         </faims>
       </instance>
       <bind nodeset="/faims/Control/Control/Next_ID" type="decimal"/>
+      <bind nodeset="/faims/Scan_Record/Tab/Year" type="decimal"/>
       <bind nodeset="/faims/Scan_Record/Tab/Volume" type="decimal"/>
       <bind nodeset="/faims/Scan_Record/Tab/Issue" type="decimal"/>
       <bind nodeset="/faims/Scan_Record/Tab/Start_Page" type="decimal"/>
