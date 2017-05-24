@@ -2394,9 +2394,6 @@ for (m : ENTITY_MENUS) {
     String autoNumDest = "";
     autoNumDest = "Scan_Record/Tab/ID";
     incAutoNum(autoNumDest);
-
-    initialisePeriods();
-    initialiseSelected();
   }
 
   // Overrides autogen definition
