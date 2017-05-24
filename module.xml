@@ -92,9 +92,7 @@
     <Start_Page b="decimal"/>
     <End_Page b="decimal"/>
     <File_Reference/>
- </Tab>   
- <Tab>
-    Keywords
+
      <!--<Theme>-->
       <!--<opts>-->
         <!--<opt>Epigraphy</opt>-->

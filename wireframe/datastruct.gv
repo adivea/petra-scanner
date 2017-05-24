@@ -261,23 +261,6 @@ digraph {
 				</TABLE>
 			>];
 
-		}
-
-		subgraph cluster_1d06854d73 {
-			label=""
-			bgcolor="white"
-
-			struct_Label_1d06854d73 [
-			label=<
-				<TABLE BORDER="1" CELLBORDER="3" CELLSPACING="0" CELLPADDING="5" WIDTH="150" HEIGHT="10">
-					<TR>
-						<TD SIDES="b" BORDER="1">...</TD>
-						<TD SIDES="b" ALIGN="TEXT">Keywords</TD>
-						<TD SIDES="b" BORDER="1">...</TD>
-					</TR>
-				</TABLE>
-			>];
-
 			struct_Elems_9942dd9526 [
 			label=<
 				<TABLE BORDER="0" CELLSPACING="0" WIDTH="150">
@@ -401,7 +384,6 @@ digraph {
 
 	/* Intra-tab, label-to-label links */
 	struct_Label_3484e0557d -> struct_Label_b5348d5536
-	struct_Label_1d06854d73 -> struct_Label_1d06854d73
 	struct_Label_1d06854d73 -> struct_Label_d25bf375d4
 	struct_Label_d25bf375d4 -> struct_Label_14a00de7b8
 	/* Graph-constraining links */
